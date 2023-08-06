@@ -3,12 +3,15 @@ import { styled } from "styled-components";
 export const StyledApp = styled.div`
   width: 400px;
   max-width: 100vw;
-  margin: 0.5rem auto;
-  height: 100svh;
+  margin: 0 auto;
+  height: 100vh;
   height: 100dvh;
+  padding: 0.5rem;
+  box-sizing: border-box;
 `;
 
 export const StyledGrid = styled.div`
+  height: 100%;
   display: grid;
   gap: 0.25rem;
   grid-template-areas:

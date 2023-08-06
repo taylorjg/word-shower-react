@@ -4,4 +4,5 @@ import { StyledPanel } from "./Common.styles";
 
 export const StyledButtons = styled(StyledPanel)`
   grid-area: e;
+  font-size: xx-large;
 `;
