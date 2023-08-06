@@ -4,8 +4,7 @@ export const StyledApp = styled.div`
   width: 400px;
   max-width: 100vw;
   margin: 0 auto;
-  height: 100vh;
-  height: 100dvh;
+  height: 100%;
   padding: 0.5rem;
   box-sizing: border-box;
 `;
