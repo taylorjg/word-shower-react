@@ -1,11 +1,17 @@
-import { Header } from "@app/components";
+import { Buttons, FoundWords, Header, Score, Shower } from "@app/components";
 
-import { StyledApp } from "./App.styles";
+import { StyledApp, StyledGrid } from "./App.styles";
 
 export const App = () => {
   return (
     <StyledApp>
-      <Header />
+      <StyledGrid>
+        <Header />
+        <Shower />
+        <FoundWords />
+        <Score />
+        <Buttons />
+      </StyledGrid>
     </StyledApp>
   );
 };
