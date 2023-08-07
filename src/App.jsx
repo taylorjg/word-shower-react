@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import ReactSlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 
@@ -21,19 +21,18 @@ import { StyledApp, StyledGrid } from "./App.styles";
 
 export const App = () => {
   const [running, setRunning] = useState(false);
-  const [lastWordAdded, setLastWordAdded] = useState();
   const [foundWords, setFoundWords] = useState([]);
   const [score, setScore] = useState(0);
   const [isInstructionsPaneOpen, setIsInstructionsPaneOpen] = useState(false);
   const [isSettingsPaneOpen, setIsSettingsPaneOpen] = useState(false);
-
-  console.log("lastWordAdded:", lastWordAdded);
+  const lastWordAddedRef = useRef();
 
   const onWord = useCallback((word) => {
-    console.log("[onWord]", word);
-    if (word.length >= 4) {
+    const lastWordAdded = lastWordAddedRef.current;
+    console.log("[onWord]", { word, lastWordAdded });
+    if (word.length >= 4 && word !== lastWordAdded) {
       setFoundWords((currentFoundWords) => [...currentFoundWords, word]);
-      setLastWordAdded(word);
+      lastWordAddedRef.current = word;
       const wordScore = getScrabbleScore(word);
       setScore((currentScore) => currentScore + wordScore);
     }
@@ -51,12 +50,11 @@ export const App = () => {
   const onStop = () => {
     setRunning(false);
     stopSpeechRecognition();
-    setLastWordAdded();
   };
 
   const reset = () => {
     setFoundWords([]);
-    setLastWordAdded();
+    lastWordAddedRef.current = undefined;
     setScore(0);
   };
 
