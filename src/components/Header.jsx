@@ -20,5 +20,5 @@ export const Header = ({ message }) => {
 };
 
 Header.propTypes = {
-  message: PropTypes.string,
+  message: PropTypes.node,
 };

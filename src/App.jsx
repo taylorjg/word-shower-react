@@ -11,6 +11,8 @@ import {
   Shower,
 } from "@app/components";
 
+import { getScrabbleScore } from "@app/helpers/scrabble";
+
 import { StyledApp, StyledGrid } from "./App.styles";
 
 export const App = () => {
@@ -23,7 +25,12 @@ export const App = () => {
 
   const onWord = useCallback((word) => {
     console.log("[onWord]", word);
-    setLastWordAdded(word);
+    if (word.length >= 4) {
+      setFoundWords((currentFoundWords) => [...currentFoundWords, word]);
+      setLastWordAdded(word);
+      const wordScore = getScrabbleScore(word);
+      setScore((currentScore) => currentScore + wordScore);
+    }
   }, []);
 
   const { start: startSpeechRecognition, stop: stopSpeechRecognition } =
@@ -42,7 +49,7 @@ export const App = () => {
   };
 
   const reset = () => {
-    setFoundWords();
+    setFoundWords([]);
     setLastWordAdded();
     setScore(0);
   };
