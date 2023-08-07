@@ -3,15 +3,15 @@ import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleQuestion, faGear } from "@fortawesome/free-solid-svg-icons";
 
-import { StyledHeader, StyledIcon, StyledWord } from "./Header.styles";
+import { StyledHeader, StyledIcon, StyledMessage } from "./Header.styles";
 
-export const Header = ({ word }) => {
+export const Header = ({ message }) => {
   return (
     <StyledHeader>
       <StyledIcon>
         <FontAwesomeIcon icon={faCircleQuestion} />
       </StyledIcon>
-      <StyledWord>{word ? word : null}</StyledWord>
+      <StyledMessage>{message}</StyledMessage>
       <StyledIcon>
         <FontAwesomeIcon icon={faGear} />
       </StyledIcon>
@@ -20,5 +20,5 @@ export const Header = ({ word }) => {
 };
 
 Header.propTypes = {
-  word: PropTypes.string,
+  message: PropTypes.string,
 };

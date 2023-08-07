@@ -13,7 +13,7 @@ export const StyledIcon = styled.div`
   font-size: xx-large;
 `;
 
-export const StyledWord = styled.div`
+export const StyledMessage = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
