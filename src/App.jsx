@@ -16,6 +16,8 @@ import { StyledApp, StyledGrid } from "./App.styles";
 export const App = () => {
   const [running, setRunning] = useState(false);
   const [lastWordAdded, setLastWordAdded] = useState();
+  const [foundWords, setFoundWords] = useState([]);
+  const [score, setScore] = useState(0);
 
   console.log("lastWordAdded:", lastWordAdded);
 
@@ -28,6 +30,7 @@ export const App = () => {
     useSpeechRecognition(onWord);
 
   const onStart = () => {
+    reset();
     setRunning(true);
     startSpeechRecognition();
   };
@@ -38,13 +41,19 @@ export const App = () => {
     setLastWordAdded();
   };
 
+  const reset = () => {
+    setFoundWords();
+    setLastWordAdded();
+    setScore(0);
+  };
+
   return (
     <StyledApp>
       <StyledGrid>
         <Header message={running ? <Listening /> : null} />
         <Shower />
-        <FoundWords />
-        <Score />
+        <FoundWords foundWords={foundWords} />
+        <Score score={score} />
         <Buttons running={running} onStart={onStart} onStop={onStop} />
       </StyledGrid>
     </StyledApp>

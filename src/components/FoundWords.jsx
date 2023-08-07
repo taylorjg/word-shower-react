@@ -1,5 +1,17 @@
-import { StyledFoundWords } from "./FoundWords.styles";
+import PropTypes from "prop-types";
 
-export const FoundWords = () => {
-  return <StyledFoundWords>FoundWords</StyledFoundWords>;
+import { StyledFoundWords, StyledFoundWord } from "./FoundWords.styles";
+
+export const FoundWords = ({ foundWords }) => {
+  return (
+    <StyledFoundWords>
+      {foundWords.map((foundWord, index) => (
+        <StyledFoundWord key={index}>{foundWord}</StyledFoundWord>
+      ))}
+    </StyledFoundWords>
+  );
+};
+
+FoundWords.propTypes = {
+  foundWords: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
 };
