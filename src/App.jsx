@@ -31,7 +31,7 @@ export const App = () => {
     const lastWordAdded = lastWordAddedRef.current;
     console.log("[onWord]", { word, lastWordAdded });
     if (word.length >= 4 && word !== lastWordAdded) {
-      setFoundWords((currentFoundWords) => [...currentFoundWords, word]);
+      setFoundWords((currentFoundWords) => [word, ...currentFoundWords]);
       lastWordAddedRef.current = word;
       const wordScore = getScrabbleScore(word);
       setScore((currentScore) => currentScore + wordScore);
