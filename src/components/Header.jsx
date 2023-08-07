@@ -5,7 +5,11 @@ import { faCircleQuestion, faGear } from "@fortawesome/free-solid-svg-icons";
 
 import { StyledHeader, StyledIcon, StyledMessage } from "./Header.styles";
 
-export const Header = ({ message, onOpenInstructionsPane }) => {
+export const Header = ({
+  message,
+  onOpenInstructionsPane,
+  onOpenSettingsPane,
+}) => {
   return (
     <StyledHeader>
       <StyledIcon>
@@ -16,7 +20,7 @@ export const Header = ({ message, onOpenInstructionsPane }) => {
       </StyledIcon>
       <StyledMessage>{message}</StyledMessage>
       <StyledIcon>
-        <FontAwesomeIcon icon={faGear} />
+        <FontAwesomeIcon icon={faGear} onClick={onOpenSettingsPane} />
       </StyledIcon>
     </StyledHeader>
   );
@@ -25,4 +29,5 @@ export const Header = ({ message, onOpenInstructionsPane }) => {
 Header.propTypes = {
   message: PropTypes.node,
   onOpenInstructionsPane: PropTypes.func.isRequired,
+  onOpenSettingsPane: PropTypes.func.isRequired,
 };

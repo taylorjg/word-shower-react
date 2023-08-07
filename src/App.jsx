@@ -11,6 +11,7 @@ import {
   InstructionsPane,
   Listening,
   Score,
+  SettingsPane,
   Shower,
 } from "@app/components";
 
@@ -24,9 +25,9 @@ export const App = () => {
   const [foundWords, setFoundWords] = useState([]);
   const [score, setScore] = useState(0);
   const [isInstructionsPaneOpen, setIsInstructionsPaneOpen] = useState(false);
+  const [isSettingsPaneOpen, setIsSettingsPaneOpen] = useState(false);
 
   console.log("lastWordAdded:", lastWordAdded);
-  console.log("isInstructionsPaneOpen:", isInstructionsPaneOpen);
 
   const onWord = useCallback((word) => {
     console.log("[onWord]", word);
@@ -59,26 +60,54 @@ export const App = () => {
     setScore(0);
   };
 
+  const openInstructionsPane = () => {
+    setIsInstructionsPaneOpen(true);
+  };
+
+  const closeInstructionsPane = () => {
+    setIsInstructionsPaneOpen(false);
+  };
+
+  const openSettingsPane = () => {
+    setIsSettingsPaneOpen(true);
+  };
+
+  const closeSettingsPane = () => {
+    setIsSettingsPaneOpen(false);
+  };
+
   return (
     <StyledApp>
       <StyledGrid>
         <Header
           message={running ? <Listening /> : null}
-          onOpenInstructionsPane={() => setIsInstructionsPaneOpen(true)}
+          onOpenInstructionsPane={openInstructionsPane}
+          onOpenSettingsPane={openSettingsPane}
         />
         <Shower />
         <FoundWords foundWords={foundWords} />
         <Score score={score} />
         <Buttons running={running} onStart={onStart} onStop={onStop} />
       </StyledGrid>
+
       <ReactSlidingPane
         isOpen={isInstructionsPaneOpen}
-        onRequestClose={() => setIsInstructionsPaneOpen(false)}
+        onRequestClose={closeInstructionsPane}
         from="left"
         width="100%"
         hideHeader={true}
       >
-        <InstructionsPane onClose={() => setIsInstructionsPaneOpen(false)} />
+        <InstructionsPane onClose={closeInstructionsPane} />
+      </ReactSlidingPane>
+
+      <ReactSlidingPane
+        isOpen={isSettingsPaneOpen}
+        onRequestClose={closeSettingsPane}
+        from="left"
+        width="100%"
+        hideHeader={true}
+      >
+        <SettingsPane onClose={closeSettingsPane} />
       </ReactSlidingPane>
     </StyledApp>
   );
