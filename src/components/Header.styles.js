@@ -11,6 +11,7 @@ export const StyledHeader = styled(StyledPanel)`
 
 export const StyledIcon = styled.div`
   font-size: xx-large;
+  cursor: pointer;
 `;
 
 export const StyledMessage = styled.div`

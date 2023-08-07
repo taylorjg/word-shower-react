@@ -1,4 +1,6 @@
 import { useCallback, useState } from "react";
+import ReactSlidingPane from "react-sliding-pane";
+import "react-sliding-pane/dist/react-sliding-pane.css";
 
 import { useSpeechRecognition } from "@app/hooks/use-speech-recognition";
 
@@ -6,6 +8,7 @@ import {
   Buttons,
   FoundWords,
   Header,
+  InstructionsPane,
   Listening,
   Score,
   Shower,
@@ -20,8 +23,10 @@ export const App = () => {
   const [lastWordAdded, setLastWordAdded] = useState();
   const [foundWords, setFoundWords] = useState([]);
   const [score, setScore] = useState(0);
+  const [isInstructionsPaneOpen, setIsInstructionsPaneOpen] = useState(false);
 
   console.log("lastWordAdded:", lastWordAdded);
+  console.log("isInstructionsPaneOpen:", isInstructionsPaneOpen);
 
   const onWord = useCallback((word) => {
     console.log("[onWord]", word);
@@ -57,12 +62,24 @@ export const App = () => {
   return (
     <StyledApp>
       <StyledGrid>
-        <Header message={running ? <Listening /> : null} />
+        <Header
+          message={running ? <Listening /> : null}
+          onOpenInstructionsPane={() => setIsInstructionsPaneOpen(true)}
+        />
         <Shower />
         <FoundWords foundWords={foundWords} />
         <Score score={score} />
         <Buttons running={running} onStart={onStart} onStop={onStop} />
       </StyledGrid>
+      <ReactSlidingPane
+        isOpen={isInstructionsPaneOpen}
+        onRequestClose={() => setIsInstructionsPaneOpen(false)}
+        from="left"
+        width="100%"
+        hideHeader={true}
+      >
+        <InstructionsPane onClose={() => setIsInstructionsPaneOpen(false)} />
+      </ReactSlidingPane>
     </StyledApp>
   );
 };
