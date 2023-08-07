@@ -1,33 +1,21 @@
-import { useState } from "react";
 import PropTypes from "prop-types";
 
 import { StyledButtons } from "./Buttons.styles";
 
-export const Buttons = ({ onStart, onStop }) => {
-  const [running, setRunning] = useState(false);
-
-  const onStartClick = () => {
-    setRunning(true);
-    onStart();
-  };
-
-  const onStopClick = () => {
-    setRunning(false);
-    onStop();
-  };
-
+export const Buttons = ({ running, onStart, onStop }) => {
   return (
     <StyledButtons>
       {running ? (
-        <button onClick={onStopClick}>Stop</button>
+        <button onClick={onStop}>Stop</button>
       ) : (
-        <button onClick={onStartClick}>Start</button>
+        <button onClick={onStart}>Start</button>
       )}
     </StyledButtons>
   );
 };
 
 Buttons.propTypes = {
+  running: PropTypes.bool.isRequired,
   onStart: PropTypes.func.isRequired,
   onStop: PropTypes.func.isRequired,
 };

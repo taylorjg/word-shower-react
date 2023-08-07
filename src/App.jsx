@@ -6,33 +6,36 @@ import { useSpeechRecognition } from "@app/hooks/use-speech-recognition";
 import { StyledApp, StyledGrid } from "./App.styles";
 
 export const App = () => {
-  const [lastWord, setLastWord] = useState();
+  const [running, setRunning] = useState(false);
+  const [lastWordAdded, setLastWordAdded] = useState();
 
   const onWord = useCallback((word) => {
     console.log("[onWord]", word);
-    setLastWord(word);
+    setLastWordAdded(word);
   }, []);
 
   const { start: startSpeechRecognition, stop: stopSpeechRecognition } =
     useSpeechRecognition(onWord);
 
   const onStart = () => {
+    setRunning(true);
     startSpeechRecognition();
   };
 
   const onStop = () => {
+    setRunning(false);
     stopSpeechRecognition();
-    setLastWord();
+    setLastWordAdded();
   };
 
   return (
     <StyledApp>
       <StyledGrid>
-        <Header word={lastWord} />
+        <Header word={lastWordAdded} />
         <Shower />
         <FoundWords />
         <Score />
-        <Buttons onStart={onStart} onStop={onStop} />
+        <Buttons running={running} onStart={onStart} onStop={onStop} />
       </StyledGrid>
     </StyledApp>
   );
