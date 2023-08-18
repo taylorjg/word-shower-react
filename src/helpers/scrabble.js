@@ -33,7 +33,9 @@ export const getFullSetOfScrabbleLetters = () => {
 
 export const getScrabbleScore = (word) => {
   return Array.from(word).reduce(
-    (acc, letter) => acc + lettersToValues.get(letter) ?? 0,
+    (acc, letter) => acc + lookupLetterValue(letter),
     0
   );
 };
+
+export const lookupLetterValue = (letter) => lettersToValues.get(letter) ?? 0;

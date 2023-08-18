@@ -4,9 +4,13 @@ import { StyledPanel } from "./Common.styles";
 
 export const StyledFoundWords = styled(StyledPanel)`
   grid-area: c;
-  overflow-y: scroll;
+  overflow: scroll;
 `;
 
 export const StyledFoundWord = styled.div`
-  font-size: x-large;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 0.1rem;
+  margin-bottom: 0.25rem;
 `;

@@ -1,6 +1,7 @@
 import { useCallback, useRef } from "react";
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
 
 export const useSpeechRecognition = (onWord) => {
   const recognitionRef = useRef();
