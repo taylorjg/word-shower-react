@@ -1,6 +1,6 @@
 # Description
 
-We had the wonderful @luciavelasco working with us as a contractor for a year at Disney Streaming.
+We had the wonderful [Lucia Velasco](https://github.com/luciavelasco) working with us as a contractor for a year at Disney Streaming.
 This project is based on her brilliant [word-shower](https://github.com/luciavelasco/word-shower) repo.
 
 It differs in these ways:
