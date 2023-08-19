@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import ReactSlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 
+import { useActiveLetters } from "@app/hooks/use-active-letters";
 import { useSpeechRecognition } from "@app/hooks/use-speech-recognition";
 
 import {
@@ -21,21 +22,20 @@ import { StyledApp, StyledGrid } from "./App.styles";
 
 export const App = () => {
   const [running, setRunning] = useState(false);
-  const [foundWords, setFoundWords] = useState([
-    "onion",
-    "kiss",
-    "door",
-    "janitor",
-  ]);
+  const [foundWords, setFoundWords] = useState([]);
   const [score, setScore] = useState(0);
   const [isInstructionsPaneOpen, setIsInstructionsPaneOpen] = useState(false);
   const [isSettingsPaneOpen, setIsSettingsPaneOpen] = useState(false);
   const lastWordAddedRef = useRef();
+  const { activeLetters, startActiveLetters, stopActiveLetters } =
+    useActiveLetters();
 
   const onWord = useCallback((word) => {
     const lastWordAdded = lastWordAddedRef.current;
     console.log("[onWord]", { word, lastWordAdded });
     if (word.length >= 4 && word !== lastWordAdded) {
+      // TODO: check whether all the letters in "word" are in "activeLetters"
+      // TODO: difference between strict check and lenient check re repeated letters
       setFoundWords((currentFoundWords) => [word, ...currentFoundWords]);
       lastWordAddedRef.current = word;
       const wordScore = getScrabbleScore(word);
@@ -50,11 +50,13 @@ export const App = () => {
     reset();
     setRunning(true);
     startSpeechRecognition();
+    startActiveLetters();
   };
 
   const onStop = () => {
     setRunning(false);
     stopSpeechRecognition();
+    stopActiveLetters();
   };
 
   const reset = () => {
@@ -87,7 +89,7 @@ export const App = () => {
           onOpenInstructionsPane={openInstructionsPane}
           onOpenSettingsPane={openSettingsPane}
         />
-        <Shower />
+        <Shower activeLetters={activeLetters} />
         <FoundWords foundWords={foundWords} />
         <Score score={score} />
         <Buttons running={running} onStart={onStart} onStop={onStop} />

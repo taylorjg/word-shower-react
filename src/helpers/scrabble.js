@@ -25,10 +25,21 @@ const lettersToValues = new Map(
   )
 );
 
-export const getFullSetOfScrabbleLetters = () => {
+const getFullSetOfScrabbleLetters = () => {
   return Array.from(countsToLetters.entries()).flatMap(([count, letters]) =>
     Array.from(letters).flatMap((letter) => Array(count).fill(letter))
   );
+};
+
+export const fullSetOfScrabbleLetters = getFullSetOfScrabbleLetters();
+
+const randomElement = (xs) => {
+  const randomIndex = Math.floor(Math.random() * xs.length);
+  return xs[randomIndex];
+};
+
+export const getRandomLetter = () => {
+  return randomElement(fullSetOfScrabbleLetters);
 };
 
 export const getScrabbleScore = (word) => {
