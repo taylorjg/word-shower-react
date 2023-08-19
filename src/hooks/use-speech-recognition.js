@@ -6,6 +6,7 @@ const SpeechRecognition =
 export const useSpeechRecognition = (onWord) => {
   const recognitionRef = useRef();
   const runningRef = useRef(false);
+  const onWordRef = useRef();
 
   const start = useCallback(() => {
     const onStart = (event) => {
@@ -28,7 +29,9 @@ export const useSpeechRecognition = (onWord) => {
         .map((s) => s.trim())
         .map((s) => s.toLowerCase());
       const word = words[0];
-      onWord(word);
+      if (onWordRef.current) {
+        onWordRef.current(word);
+      }
     };
 
     const onNoMatch = (event) => {
@@ -57,7 +60,7 @@ export const useSpeechRecognition = (onWord) => {
 
     runningRef.current = true;
     recognitionRef.current.start();
-  }, [onWord]);
+  }, []);
 
   const stop = useCallback(() => {
     runningRef.current = false;
@@ -65,6 +68,10 @@ export const useSpeechRecognition = (onWord) => {
       recognitionRef.current.stop();
     }
   }, []);
+
+  if (runningRef.current && recognitionRef.current) {
+    onWordRef.current = onWord;
+  }
 
   return {
     start,

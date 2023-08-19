@@ -5,6 +5,8 @@ import "react-sliding-pane/dist/react-sliding-pane.css";
 import { useActiveLetters } from "@app/hooks/use-active-letters";
 import { useSpeechRecognition } from "@app/hooks/use-speech-recognition";
 
+import { checkWord } from "@app/utils/check-word";
+
 import {
   Buttons,
   FoundWords,
@@ -27,21 +29,25 @@ export const App = () => {
   const [isInstructionsPaneOpen, setIsInstructionsPaneOpen] = useState(false);
   const [isSettingsPaneOpen, setIsSettingsPaneOpen] = useState(false);
   const lastWordAddedRef = useRef();
+  const [strictMode] = useState(false);
   const { activeLetters, startActiveLetters, stopActiveLetters } =
     useActiveLetters();
 
-  const onWord = useCallback((word) => {
-    const lastWordAdded = lastWordAddedRef.current;
-    console.log("[onWord]", { word, lastWordAdded });
-    if (word.length >= 4 && word !== lastWordAdded) {
-      // TODO: check whether all the letters in "word" are in "activeLetters"
-      // TODO: difference between strict check and lenient check re repeated letters
-      setFoundWords((currentFoundWords) => [word, ...currentFoundWords]);
-      lastWordAddedRef.current = word;
-      const wordScore = getScrabbleScore(word);
-      setScore((currentScore) => currentScore + wordScore);
-    }
-  }, []);
+  const onWord = useCallback(
+    (word) => {
+      const lastWordAdded = lastWordAddedRef.current;
+      console.log("[onWord]", { word, lastWordAdded, activeLetters });
+      if (word.length >= 4 && word !== lastWordAdded) {
+        if (checkWord(word, activeLetters, strictMode)) {
+          setFoundWords((currentFoundWords) => [word, ...currentFoundWords]);
+          lastWordAddedRef.current = word;
+          const wordScore = getScrabbleScore(word);
+          setScore((currentScore) => currentScore + wordScore);
+        }
+      }
+    },
+    [activeLetters, strictMode]
+  );
 
   const { start: startSpeechRecognition, stop: stopSpeechRecognition } =
     useSpeechRecognition(onWord);

@@ -3,9 +3,10 @@ import PropTypes from "prop-types";
 import { StyledShower } from "./Shower.styles";
 
 export const Shower = ({ activeLetters }) => {
-  return <StyledShower>{activeLetters}</StyledShower>;
+  const activeLettersString = activeLetters.join("");
+  return <StyledShower>{activeLettersString}</StyledShower>;
 };
 
 Shower.propTypes = {
-  activeLetters: PropTypes.string.isRequired,
+  activeLetters: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
