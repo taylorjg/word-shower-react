@@ -10,7 +10,20 @@ import {
 export const Letter = ({ letter, value }) => {
   return (
     <StyledSvg viewBox="0 0 100 100">
-      <StyledLetterBackground x={0} y={0} width={100} height={100} rx={20} />
+      <defs>
+        <filter id="shadow">
+          <feDropShadow dx="2" dy="2" stdDeviation="2" />
+        </filter>
+      </defs>
+
+      <StyledLetterBackground
+        x={3}
+        y={3}
+        width={94}
+        height={94}
+        rx={20}
+        filter="url(#shadow)"
+      />
       <StyledLetter x={50} y={50}>
         {letter.toUpperCase()}
       </StyledLetter>

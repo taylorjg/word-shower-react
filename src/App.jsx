@@ -24,7 +24,7 @@ import { StyledApp, StyledGrid } from "./App.styles";
 
 export const App = () => {
   const [running, setRunning] = useState(false);
-  const [foundWords, setFoundWords] = useState([]);
+  const [foundWords, setFoundWords] = useState(["door"]);
   const [score, setScore] = useState(0);
   const [isInstructionsPaneOpen, setIsInstructionsPaneOpen] = useState(false);
   const [isSettingsPaneOpen, setIsSettingsPaneOpen] = useState(false);
