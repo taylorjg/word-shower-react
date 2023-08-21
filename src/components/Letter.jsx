@@ -1,5 +1,7 @@
 import PropTypes from "prop-types";
 
+import { lookupLetterValue } from "@app/helpers/scrabble";
+
 import {
   StyledSvg,
   StyledLetterBackground,
@@ -7,21 +9,23 @@ import {
   StyledValue,
 } from "./Letter.styles";
 
-export const Letter = ({ letter, value }) => {
+export const Letter = ({ letter }) => {
+  const value = lookupLetterValue(letter);
+
   return (
     <StyledSvg viewBox="0 0 100 100">
       <defs>
         <filter id="shadow">
-          <feDropShadow dx="2" dy="2" stdDeviation="2" />
+          <feDropShadow dx="2" dy="2" stdDeviation="1" />
         </filter>
       </defs>
 
       <StyledLetterBackground
-        x={3}
-        y={3}
-        width={94}
-        height={94}
-        rx={20}
+        x={4}
+        y={4}
+        width={92}
+        height={92}
+        rx={12}
         filter="url(#shadow)"
       />
       <StyledLetter x={50} y={50}>
@@ -36,5 +40,4 @@ export const Letter = ({ letter, value }) => {
 
 Letter.propTypes = {
   letter: PropTypes.string.isRequired,
-  value: PropTypes.number.isRequired,
 };

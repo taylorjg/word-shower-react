@@ -11,6 +11,7 @@ export const StyledLetterBackground = styled.rect`
 
 export const StyledLetter = styled.text`
   fill: black;
+  font-family: arial;
   font-size: 4rem;
   text-anchor: middle;
   dominant-baseline: central;
@@ -18,7 +19,8 @@ export const StyledLetter = styled.text`
 
 export const StyledValue = styled.text`
   fill: black;
-  font-size: 1.8rem;
+  font-family: arial;
+  font-size: 1.5rem;
   text-anchor: middle;
   dominant-baseline: central;
 `;
