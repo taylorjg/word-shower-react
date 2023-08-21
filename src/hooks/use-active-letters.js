@@ -11,6 +11,11 @@ export const useActiveLetters = () => {
   const callCountRef = useRef(0);
   const stopPendingRef = useRef(false);
   const intervalIdRef = useRef(false);
+  const nextIdRef = useRef(0);
+
+  const getNextId = () => {
+    return nextIdRef.current++;
+  };
 
   const start = useCallback(() => {
     callCountRef.current = 0;
@@ -19,19 +24,22 @@ export const useActiveLetters = () => {
       callCountRef.current += 1;
       setActiveLetters((currentActiveLetters) => {
         if (stopPendingRef.current) {
-          const [, ...remainingLetters] = currentActiveLetters;
-          if (remainingLetters.length === 0) {
+          const [, ...remainingLetterWrappers] = currentActiveLetters;
+          if (remainingLetterWrappers.length === 0) {
             clearInterval(intervalIdRef.current);
             intervalIdRef.current = false;
           }
-          return remainingLetters;
+          return remainingLetterWrappers;
         } else {
-          const nextLetter = getRandomLetter();
+          const newLetterWrapper = {
+            id: getNextId(),
+            letter: getRandomLetter(),
+          };
           if (callCountRef.current >= MIN_CALL_COUNT) {
-            const [, ...remainingLetters] = currentActiveLetters;
-            return [...remainingLetters, nextLetter];
+            const [, ...remainingLetterWrappers] = currentActiveLetters;
+            return [...remainingLetterWrappers, newLetterWrapper];
           } else {
-            return [...currentActiveLetters, nextLetter];
+            return [...currentActiveLetters, newLetterWrapper];
           }
         }
       });

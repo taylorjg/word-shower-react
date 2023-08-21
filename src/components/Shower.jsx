@@ -1,34 +1,53 @@
+import { useRef } from "react";
 import PropTypes from "prop-types";
 import { animated, useSpring } from "@react-spring/web";
 
 import { Letter } from "./Letter";
 import { StyledShower } from "./Shower.styles";
 
-export const Shower = ({ activeLetters }) => {
-  // const activeLettersString = activeLetters.join("");
-  // return <StyledShower>{activeLettersString}</StyledShower>;
+const AnimatedLetter = ({ letter }) => {
+  const leftRef = useRef(`calc((100% - 1rem) * ${Math.random()})`);
 
   const springs = useSpring({
-    from: { y: "0%" },
-    to: { y: "100%" },
+    from: { top: "0%" },
+    to: { top: "100%" },
     config: { duration: 4000 },
   });
 
   return (
+    <animated.div
+      style={{
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        left: leftRef.current,
+        ...springs,
+      }}
+    >
+      <Letter letter={letter} />
+    </animated.div>
+  );
+};
+
+AnimatedLetter.propTypes = {
+  letter: PropTypes.string.isRequired,
+};
+
+export const Shower = ({ letterWrappers }) => {
+  return (
     <StyledShower>
-      <animated.div
-        style={{
-          width: "100%",
-          height: "100%",
-          ...springs,
-        }}
-      >
-        <Letter letter="d" />
-      </animated.div>
+      {letterWrappers.map(({ id, letter }) => {
+        return <AnimatedLetter key={id} letter={letter} />;
+      })}
     </StyledShower>
   );
 };
 
 Shower.propTypes = {
-  activeLetters: PropTypes.arrayOf(PropTypes.string).isRequired,
+  letterWrappers: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      letter: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };

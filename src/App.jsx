@@ -95,7 +95,7 @@ export const App = () => {
           onOpenInstructionsPane={openInstructionsPane}
           onOpenSettingsPane={openSettingsPane}
         />
-        <Shower activeLetters={activeLetters} />
+        <Shower letterWrappers={activeLetters} />
         <FoundWords foundWords={foundWords} />
         <Score score={score} />
         <Buttons running={running} onStart={onStart} onStop={onStop} />
