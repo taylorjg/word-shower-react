@@ -1,4 +1,5 @@
-export const checkWord = (word, activeLetters, strictMode) => {
+export const checkWord = (word, activeLetterWrappers, strictMode) => {
+  const activeLetters = activeLetterWrappers.map(({ letter }) => letter);
   return strictMode
     ? checkWordStrict(word, activeLetters)
     : checkWordLenient(word, activeLetters);

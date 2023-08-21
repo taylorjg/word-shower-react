@@ -36,7 +36,11 @@ export const App = () => {
   const onWord = useCallback(
     (word) => {
       const lastWordAdded = lastWordAddedRef.current;
-      console.log("[onWord]", { word, lastWordAdded, activeLetters });
+      console.log("[onWord]", {
+        word,
+        lastWordAdded,
+        activeLetters: activeLetters.map(({ letter }) => letter).join(""),
+      });
       if (word.length >= 4 && word !== lastWordAdded) {
         if (checkWord(word, activeLetters, strictMode)) {
           setFoundWords((currentFoundWords) => [word, ...currentFoundWords]);
