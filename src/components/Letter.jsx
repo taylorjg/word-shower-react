@@ -9,11 +9,11 @@ import {
   StyledValue,
 } from "./Letter.styles";
 
-export const Letter = ({ letter }) => {
+export const Letter = ({ letter, size }) => {
   const value = lookupLetterValue(letter);
 
   return (
-    <StyledSvg viewBox="0 0 100 100">
+    <StyledSvg viewBox="0 0 100 100" size={size}>
       <defs>
         <filter id="shadow">
           <feDropShadow dx="2" dy="2" stdDeviation="1" />
@@ -40,4 +40,5 @@ export const Letter = ({ letter }) => {
 
 Letter.propTypes = {
   letter: PropTypes.string.isRequired,
+  size: PropTypes.oneOf(["small", "large"]).isRequired,
 };

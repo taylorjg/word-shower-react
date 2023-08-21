@@ -12,7 +12,7 @@ export const FoundWords = ({ foundWords }) => {
         return (
           <StyledFoundWord key={foundWordIndex}>
             {letters.map((letter, letterIndex) => (
-              <Letter key={letterIndex} letter={letter} />
+              <Letter key={letterIndex} letter={letter} size="small" />
             ))}
           </StyledFoundWord>
         );

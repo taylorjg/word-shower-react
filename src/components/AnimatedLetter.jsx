@@ -6,7 +6,7 @@ import { Letter } from "./Letter";
 import { StyledAnimatedLetter } from "./AnimatedLetter.styles";
 
 export const AnimatedLetter = ({ letter }) => {
-  const leftRef = useRef(`calc((100% - 1rem) * ${Math.random()})`);
+  const leftRef = useRef(`calc((100% - 2rem) * ${Math.random()})`);
 
   const springs = useSpring({
     from: { top: "0%" },
@@ -16,7 +16,7 @@ export const AnimatedLetter = ({ letter }) => {
 
   return (
     <StyledAnimatedLetter style={{ left: leftRef.current, ...springs }}>
-      <Letter letter={letter} />
+      <Letter letter={letter} size="large" />
     </StyledAnimatedLetter>
   );
 };

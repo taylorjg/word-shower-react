@@ -1,8 +1,18 @@
 import { styled } from "styled-components";
 
+const getSize = (size) => {
+  switch (size) {
+    default:
+    case "small":
+      return "1rem";
+    case "large":
+      return "2rem";
+  }
+};
+
 export const StyledSvg = styled.svg`
-  width: 1rem;
-  height: 1rem;
+  width: ${({ size }) => getSize(size)};
+  height: ${({ size }) => getSize(size)};
 `;
 
 export const StyledLetterBackground = styled.rect`
