@@ -3,7 +3,7 @@
 We had the wonderful [Lucia Velasco](https://github.com/luciavelasco) working with us as a contractor for a year at Disney Streaming.
 This project is based on her brilliant [word-shower](https://github.com/luciavelasco/word-shower) repo.
 
-It differs in these ways:
+My version makes the following changes:
 
 * Uses React
 * Aims to be playable on a small screen
@@ -31,10 +31,14 @@ It differs in these ways:
 
 :construction: This repo is still work-in-progress :construction:
 
-* Animate the active letters
-* Complete the Instructions pane
-* Complete the Settings pane
-  * Add "Strict Mode": in this mode, for the word `KISS` to be valid, there would have to be two instances of the letter `S` in the list of active letters
+* [x] Animate the active letters
+* [ ] Complete the Instructions pane
+  * [ ] Main instructions for playing the game
+  * [ ] Mention that Web Speech API `continuous` mode may not been supported
+* [ ] Complete the Settings pane
+  * [ ] New letter interval (say 100ms to 2s, default 500ms)
+  * [ ] Letter speed (say 1s to 10s, default 4s)
+  * [ ] Strict Mode - in this mode, for the word `KISS` to be valid, there would have to be two instances of the letter `S` in the list of active letters
 * Improve the UI on smaller screens
 * Improve the UI on larger screens
 
