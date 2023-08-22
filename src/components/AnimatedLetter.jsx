@@ -4,9 +4,12 @@ import { useSpring } from "@react-spring/web";
 
 import { Letter } from "./Letter";
 import { StyledAnimatedLetter } from "./AnimatedLetter.styles";
+import { getLetterSize } from "./Letter.styles";
 
 export const AnimatedLetter = ({ letter }) => {
-  const leftRef = useRef(`calc((100% - 2rem) * ${Math.random()})`);
+  const size = "large";
+  const letterSize = getLetterSize("large");
+  const leftRef = useRef(`calc((100% - ${letterSize}) * ${Math.random()})`);
 
   const springs = useSpring({
     from: { top: "0%" },
@@ -16,7 +19,7 @@ export const AnimatedLetter = ({ letter }) => {
 
   return (
     <StyledAnimatedLetter style={{ left: leftRef.current, ...springs }}>
-      <Letter letter={letter} size="large" />
+      <Letter letter={letter} size={size} />
     </StyledAnimatedLetter>
   );
 };
