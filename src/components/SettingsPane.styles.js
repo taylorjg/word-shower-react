@@ -3,10 +3,10 @@ import { styled } from "styled-components";
 import { StyledPanel } from "./Common.styles";
 
 export const StyledPane = styled.div`
-  height: 100%;
   display: grid;
   grid-template-rows: auto 1fr;
   row-gap: 0.5rem;
+  padding: 0.5rem;
 `;
 
 export const StyledPaneHead = styled(StyledPanel)`

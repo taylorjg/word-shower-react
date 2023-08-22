@@ -1,12 +1,16 @@
 import { styled } from "styled-components";
 
 export const StyledApp = styled.div`
-  width: 400px;
+  width: 600px;
+  padding: 4rem 0;
   max-width: 100vw;
   margin: 0 auto;
   height: 100%;
-  padding: 0.5rem;
   box-sizing: border-box;
+  @media only screen and (max-width: 600px) {
+    width: 100%;
+    padding: 0.5rem;
+  }
 `;
 
 export const StyledGrid = styled.div`
