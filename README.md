@@ -39,8 +39,8 @@ My version makes the following changes:
   * [ ] New letter interval (say 100ms to 2s, default 500ms)
   * [ ] Letter speed (say 1s to 10s, default 4s)
   * [ ] Strict Mode - in this mode, for the word `KISS` to be valid, there would have to be two instances of the letter `S` in the list of active letters
-* Improve the UI on smaller screens
-* Improve the UI on larger screens
+* [ ] Improve the UI on smaller screens
+* [ ] Improve the UI on larger screens
 
 # Links
 
