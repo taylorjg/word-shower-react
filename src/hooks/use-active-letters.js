@@ -17,9 +17,19 @@ export const useActiveLetters = () => {
     return nextIdRef.current++;
   };
 
-  const start = useCallback(() => {
+  const reset = () => {
+    if (intervalIdRef.current) {
+      clearInterval(intervalIdRef.current);
+      intervalIdRef.current = false;
+    }
+
+    setActiveLetters([]);
     callCountRef.current = 0;
     stopPendingRef.current = false;
+  };
+
+  const start = useCallback(() => {
+    reset();
     intervalIdRef.current = setInterval(() => {
       callCountRef.current += 1;
       setActiveLetters((currentActiveLetters) => {
