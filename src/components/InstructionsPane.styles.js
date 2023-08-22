@@ -38,5 +38,5 @@ export const StyledVersion = styled.div`
 export const StyledList = styled.ul``;
 
 export const StyledListItem = styled.li`
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 `;
