@@ -18,7 +18,7 @@ export const StyledPaneHead = styled(StyledPanel)`
 `;
 
 export const StyledPaneBody = styled.div`
-  font-size: x-large;
+  font-size: large;
 `;
 
 export const StyledCloseIcon = styled.div`
@@ -33,4 +33,10 @@ export const StyledVersion = styled.div`
   position: absolute;
   bottom: 0.5rem;
   right: 0.5rem;
+`;
+
+export const StyledList = styled.ul``;
+
+export const StyledListItem = styled.li`
+  margin-bottom: 0.5rem;
 `;
