@@ -17,9 +17,8 @@ export const StyledPaneHead = styled(StyledPanel)`
   position: relative;
 `;
 
-export const StyledPaneBody = styled(StyledPanel)`
+export const StyledPaneBody = styled.div`
   font-size: x-large;
-  position: relative;
 `;
 
 export const StyledCloseIcon = styled.div`

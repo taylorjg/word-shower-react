@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react";
+import { useMediaQuery } from "@uidotdev/usehooks";
 import ReactSlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 
@@ -32,6 +33,7 @@ export const App = () => {
   const [strictMode] = useState(false);
   const { activeLetters, startActiveLetters, stopActiveLetters } =
     useActiveLetters();
+  const isSmallDevice = useMediaQuery("only screen and (max-width: 600px)");
 
   const onWord = useCallback(
     (word) => {
@@ -109,7 +111,7 @@ export const App = () => {
         isOpen={isInstructionsPaneOpen}
         onRequestClose={closeInstructionsPane}
         from="left"
-        width="100%"
+        width={isSmallDevice ? "100%" : "480px"}
         hideHeader={true}
       >
         <InstructionsPane onClose={closeInstructionsPane} />
@@ -119,7 +121,7 @@ export const App = () => {
         isOpen={isSettingsPaneOpen}
         onRequestClose={closeSettingsPane}
         from="left"
-        width="100%"
+        width={isSmallDevice ? "100%" : "480px"}
         hideHeader={true}
       >
         <SettingsPane onClose={closeSettingsPane} />
