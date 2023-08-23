@@ -1,21 +1,19 @@
-import { useRef } from "react";
+import { memo } from "react";
 import PropTypes from "prop-types";
 
 import { Letter } from "./Letter";
 import { StyledAnimatedLetter } from "./AnimatedLetter.styles";
 import { getLetterSize } from "./Letter.styles";
 
-export const AnimatedLetter = ({ letter }) => {
-  const size = "large";
-  const letterSize = getLetterSize("large");
-  const leftRef = useRef(`calc((100% - ${letterSize}) * ${Math.random()})`);
+const size = "large";
+const letterSize = getLetterSize(size);
+
+const AnimatedLetter = ({ letter }) => {
+  const left = `calc((100% - ${letterSize}) * ${Math.random()})`;
   const letterFallSpeed = 4000;
 
   return (
-    <StyledAnimatedLetter
-      $left={leftRef.current}
-      $letterFallSpeed={letterFallSpeed}
-    >
+    <StyledAnimatedLetter $left={left} $letterFallSpeed={letterFallSpeed}>
       <Letter letter={letter} size={size} />
     </StyledAnimatedLetter>
   );
@@ -24,3 +22,5 @@ export const AnimatedLetter = ({ letter }) => {
 AnimatedLetter.propTypes = {
   letter: PropTypes.string.isRequired,
 };
+
+export const MemoizedAnimatedLetter = memo(AnimatedLetter);

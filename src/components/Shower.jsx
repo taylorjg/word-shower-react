@@ -1,13 +1,13 @@
 import PropTypes from "prop-types";
 
-import { AnimatedLetter } from "./AnimatedLetter";
+import { MemoizedAnimatedLetter } from "./AnimatedLetter";
 import { StyledShower } from "./Shower.styles";
 
 export const Shower = ({ letterWrappers }) => {
   return (
     <StyledShower>
       {letterWrappers.map(({ id, letter }) => {
-        return <AnimatedLetter key={id} letter={letter} />;
+        return <MemoizedAnimatedLetter key={id} letter={letter} />;
       })}
     </StyledShower>
   );
