@@ -30,10 +30,14 @@ export const App = () => {
   const [isInstructionsPaneOpen, setIsInstructionsPaneOpen] = useState(false);
   const [isSettingsPaneOpen, setIsSettingsPaneOpen] = useState(false);
   const lastWordAddedRef = useRef();
-  const [strictMode] = useState(false);
   const { activeLetters, startActiveLetters, stopActiveLetters } =
     useActiveLetters();
   const isSmallDevice = useMediaQuery("only screen and (max-width: 600px)");
+  const [settings, setSettings] = useState({
+    newLetterRate: 500,
+    letterFallSpeed: 4000,
+    strictMode: false,
+  });
 
   const onWord = useCallback(
     (word) => {
@@ -44,7 +48,7 @@ export const App = () => {
         activeLetters: activeLetters.map(({ letter }) => letter).join(""),
       });
       if (word.length >= 4 && word !== lastWordAdded) {
-        if (checkWord(word, activeLetters, strictMode)) {
+        if (checkWord(word, activeLetters, settings.strictMode)) {
           setFoundWords((currentFoundWords) => [word, ...currentFoundWords]);
           lastWordAddedRef.current = word;
           const wordScore = getScrabbleScore(word);
@@ -52,7 +56,7 @@ export const App = () => {
         }
       }
     },
-    [activeLetters, strictMode]
+    [activeLetters, settings]
   );
 
   const { start: startSpeechRecognition, stop: stopSpeechRecognition } =
@@ -93,6 +97,8 @@ export const App = () => {
     setIsSettingsPaneOpen(false);
   };
 
+  const paneWidth = isSmallDevice ? "100%" : "480px";
+
   return (
     <StyledApp>
       <StyledGrid>
@@ -111,7 +117,7 @@ export const App = () => {
         isOpen={isInstructionsPaneOpen}
         onRequestClose={closeInstructionsPane}
         from="left"
-        width={isSmallDevice ? "100%" : "480px"}
+        width={paneWidth}
         hideHeader={true}
       >
         <InstructionsPane onClose={closeInstructionsPane} />
@@ -121,10 +127,14 @@ export const App = () => {
         isOpen={isSettingsPaneOpen}
         onRequestClose={closeSettingsPane}
         from="left"
-        width={isSmallDevice ? "100%" : "480px"}
+        width={paneWidth}
         hideHeader={true}
       >
-        <SettingsPane onClose={closeSettingsPane} />
+        <SettingsPane
+          onClose={closeSettingsPane}
+          settings={settings}
+          onChangeSettings={setSettings}
+        />
       </ReactSlidingPane>
     </StyledApp>
   );
