@@ -36,12 +36,16 @@ export const useActiveLetters = (settings) => {
       callCountRef.current += 1;
       setActiveLetters((currentActiveLetters) => {
         if (stopPendingRef.current) {
-          const [, ...remainingLetterWrappers] = currentActiveLetters;
-          if (remainingLetterWrappers.length === 0) {
-            clearInterval(intervalIdRef.current);
-            intervalIdRef.current = false;
+          if (callCountRef.current >= minCallCount) {
+            const [, ...remainingLetterWrappers] = currentActiveLetters;
+            if (remainingLetterWrappers.length === 0) {
+              clearInterval(intervalIdRef.current);
+              intervalIdRef.current = false;
+            }
+            return remainingLetterWrappers;
+          } else {
+            return currentActiveLetters;
           }
-          return remainingLetterWrappers;
         } else {
           const newLetterWrapper = {
             id: getNextId(),
