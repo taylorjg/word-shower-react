@@ -4,6 +4,7 @@ import ReactSlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 
 import { useActiveLetters } from "@app/hooks/use-active-letters";
+import { useAnalytics } from "@app/hooks/use-analytics";
 import { useSpeechRecognition } from "@app/hooks/use-speech-recognition";
 
 import { checkWord } from "@app/utils/check-word";
@@ -35,6 +36,7 @@ export const App = () => {
     letterFallSpeed: 5000,
     strictMode: false,
   });
+  const startTimeRef = useRef();
 
   const { activeLetters, startActiveLetters, stopActiveLetters } =
     useActiveLetters(settings);
@@ -64,17 +66,34 @@ export const App = () => {
   const { start: startSpeechRecognition, stop: stopSpeechRecognition } =
     useSpeechRecognition(onWord);
 
+  const { sendAnalyticsClickEvent } = useAnalytics();
+
   const onStart = () => {
     reset();
     setRunning(true);
     startSpeechRecognition();
     startActiveLetters();
+    startTimeRef.current = performance.now();
+    sendAnalyticsClickEvent("start_game", {
+      new_letter_rate: settings.newLetterRate,
+      letter_fall_speed: settings.letterFallSpeed,
+      strict_mode: settings.strictMode,
+    });
   };
 
   const onStop = () => {
     setRunning(false);
     stopSpeechRecognition();
     stopActiveLetters();
+    const numWords = new Set(foundWords).size;
+    const startTime = startTimeRef.current;
+    const endTime = performance.now();
+    const gameLength = Math.floor(endTime - startTime);
+    sendAnalyticsClickEvent("stop_game", {
+      score,
+      num_words: numWords,
+      game_length: gameLength,
+    });
   };
 
   const reset = () => {
@@ -85,18 +104,22 @@ export const App = () => {
 
   const openInstructionsPane = () => {
     setIsInstructionsPaneOpen(true);
+    sendAnalyticsClickEvent("open_pane", { pane: "instructions" });
   };
 
   const closeInstructionsPane = () => {
     setIsInstructionsPaneOpen(false);
+    sendAnalyticsClickEvent("close_pane", { pane: "instructions" });
   };
 
   const openSettingsPane = () => {
     setIsSettingsPaneOpen(true);
+    sendAnalyticsClickEvent("open_pane", { pane: "settings" });
   };
 
   const closeSettingsPane = () => {
     setIsSettingsPaneOpen(false);
+    sendAnalyticsClickEvent("close_pane", { pane: "settings" });
   };
 
   const paneWidth = isSmallDevice ? "100%" : "480px";
