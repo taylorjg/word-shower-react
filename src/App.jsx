@@ -7,7 +7,7 @@ import { useActiveLetters } from "@app/hooks/use-active-letters";
 import { useAnalytics } from "@app/hooks/use-analytics";
 import { useSpeechRecognition } from "@app/hooks/use-speech-recognition";
 
-import { checkWord } from "@app/utils/check-word";
+import { checkWord } from "@app/helpers/check-word";
 
 import {
   Buttons,
