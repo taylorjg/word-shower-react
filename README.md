@@ -33,14 +33,14 @@ My version makes the following changes:
 
 * [x] Animate the active letters
 * [ ] Complete the Instructions pane
-  * [ ] Main instructions for playing the game
+  * [x] Main instructions for playing the game
   * [ ] Mention that Web Speech API `continuous` mode may not been supported
-* [ ] Complete the Settings pane
-  * [ ] New letter interval (say 100ms to 2s, default 500ms)
-  * [ ] Letter speed (say 1s to 10s, default 4s)
-  * [ ] Strict Mode - in this mode, for the word `KISS` to be valid, there would have to be two instances of the letter `S` in the list of active letters
+* [x] Complete the Settings pane
+  * [x] New letter interval (say 100ms to 2s, default 400ms)
+  * [x] Letter speed (say 1s to 10s, default 5s)
+  * [x] Strict Mode - in this mode, for the word `KISS` to be valid, there would have to be two instances of the letter `S` in the list of active letters
 * [ ] Improve the UI on smaller screens
-* [ ] Improve the UI on larger screens
+* [x] Improve the UI on larger screens
 
 # Links
 
