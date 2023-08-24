@@ -8,6 +8,8 @@ import {
   StyledPaneHead,
   StyledPaneBody,
   StyledCloseIcon,
+} from "./Common.styles";
+import {
   StyledVersion,
   StyledList,
   StyledListItem,

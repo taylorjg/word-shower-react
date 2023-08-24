@@ -7,6 +7,8 @@ import {
   StyledPaneHead,
   StyledPaneBody,
   StyledCloseIcon,
+} from "./Common.styles";
+import {
   StyledSettings,
   StyledSetting,
   StyledSettingLabelAndValue,
