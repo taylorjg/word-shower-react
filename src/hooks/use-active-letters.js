@@ -28,9 +28,10 @@ export const useActiveLetters = (settings) => {
 
   const start = useCallback(() => {
     reset();
-    const minCallCount =
-      (settings.letterFallRate + SPEECH_RECOGNITION_DELAY) /
-      settings.newLetterRate;
+    const minCallCount = Math.floor(
+      (settings.letterFallSpeed + SPEECH_RECOGNITION_DELAY) /
+        settings.newLetterRate
+    );
     intervalIdRef.current = setInterval(() => {
       callCountRef.current += 1;
       setActiveLetters((currentActiveLetters) => {
