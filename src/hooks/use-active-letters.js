@@ -2,11 +2,9 @@ import { useCallback, useRef, useState } from "react";
 
 import { getRandomLetter } from "@app/helpers/scrabble";
 
-const ADD_LETTER_INTERVAL = 500;
-const REMOVE_LETTER_INTERVAL = 8000;
-const MIN_CALL_COUNT = REMOVE_LETTER_INTERVAL / ADD_LETTER_INTERVAL;
+const SPEECH_RECOGNITION_DELAY = 2000;
 
-export const useActiveLetters = () => {
+export const useActiveLetters = (settings) => {
   const [activeLetters, setActiveLetters] = useState([]);
   const callCountRef = useRef(0);
   const stopPendingRef = useRef(false);
@@ -30,6 +28,9 @@ export const useActiveLetters = () => {
 
   const start = useCallback(() => {
     reset();
+    const minCallCount =
+      (settings.letterFallRate + SPEECH_RECOGNITION_DELAY) /
+      settings.newLetterRate;
     intervalIdRef.current = setInterval(() => {
       callCountRef.current += 1;
       setActiveLetters((currentActiveLetters) => {
@@ -45,7 +46,7 @@ export const useActiveLetters = () => {
             id: getNextId(),
             letter: getRandomLetter(),
           };
-          if (callCountRef.current >= MIN_CALL_COUNT) {
+          if (callCountRef.current >= minCallCount) {
             const [, ...remainingLetterWrappers] = currentActiveLetters;
             return [...remainingLetterWrappers, newLetterWrapper];
           } else {
@@ -53,8 +54,8 @@ export const useActiveLetters = () => {
           }
         }
       });
-    }, ADD_LETTER_INTERVAL);
-  }, []);
+    }, settings.newLetterRate);
+  }, [settings]);
 
   const stop = useCallback(() => {
     if (intervalIdRef.current) {

@@ -30,14 +30,16 @@ export const App = () => {
   const [isInstructionsPaneOpen, setIsInstructionsPaneOpen] = useState(false);
   const [isSettingsPaneOpen, setIsSettingsPaneOpen] = useState(false);
   const lastWordAddedRef = useRef();
-  const { activeLetters, startActiveLetters, stopActiveLetters } =
-    useActiveLetters();
-  const isSmallDevice = useMediaQuery("only screen and (max-width: 600px)");
   const [settings, setSettings] = useState({
-    newLetterRate: 500,
-    letterFallSpeed: 4000,
+    newLetterRate: 400,
+    letterFallSpeed: 5000,
     strictMode: false,
   });
+
+  const { activeLetters, startActiveLetters, stopActiveLetters } =
+    useActiveLetters(settings);
+
+  const isSmallDevice = useMediaQuery("only screen and (max-width: 600px)");
 
   const onWord = useCallback(
     (word) => {
@@ -107,7 +109,10 @@ export const App = () => {
           onOpenInstructionsPane={openInstructionsPane}
           onOpenSettingsPane={openSettingsPane}
         />
-        <Shower letterWrappers={activeLetters} />
+        <Shower
+          letterWrappers={activeLetters}
+          letterFallSpeed={settings.letterFallSpeed}
+        />
         <FoundWords foundWords={foundWords} />
         <Score score={score} />
         <Buttons running={running} onStart={onStart} onStop={onStop} />

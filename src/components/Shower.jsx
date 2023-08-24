@@ -3,11 +3,17 @@ import PropTypes from "prop-types";
 import { MemoizedAnimatedLetter } from "./AnimatedLetter";
 import { StyledShower } from "./Shower.styles";
 
-export const Shower = ({ letterWrappers }) => {
+export const Shower = ({ letterWrappers, letterFallSpeed }) => {
   return (
     <StyledShower>
       {letterWrappers.map(({ id, letter }) => {
-        return <MemoizedAnimatedLetter key={id} letter={letter} />;
+        return (
+          <MemoizedAnimatedLetter
+            key={id}
+            letter={letter}
+            letterFallSpeed={letterFallSpeed}
+          />
+        );
       })}
     </StyledShower>
   );
@@ -20,4 +26,5 @@ Shower.propTypes = {
       letter: PropTypes.string.isRequired,
     })
   ).isRequired,
+  letterFallSpeed: PropTypes.number.isRequired,
 };
