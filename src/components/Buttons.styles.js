@@ -10,10 +10,13 @@ export const StyledButtons = styled(StyledPanel)`
   align-items: center;
 
   & button {
+    color: ${(props) => props.theme.colour};
+    background-color: ${(props) => props.theme.backgroundColour};
     width: 100%;
     height: 100%;
-    border: 2px solid black;
-    border-radius: 0.25rem;
-    font-size: x-large;
+    border: ${(props) => props.theme.border};
+    border-radius: ${(props) => props.theme.innerBorderRadius};
+    font-size: ${(props) => props.theme.fontSize4};
+    cursor: pointer;
   }
 `;

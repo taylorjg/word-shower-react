@@ -13,10 +13,11 @@ export const StyledSetting = styled.div`
 export const StyledSettingLabelAndValue = styled.div`
   display: flex;
   justify-content: space-between;
+  font-size: ${(props) => props.theme.fontSize3};
 `;
 
 export const StyledSettingExplanation = styled.div`
-  font-size: small;
+  font-size: ${(props) => props.theme.fontSize1};
   font-style: italic;
   margin-top: 0.5rem;
 `;
