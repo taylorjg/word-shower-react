@@ -20,3 +20,12 @@ export const StyledButtons = styled(StyledPanel)`
     cursor: pointer;
   }
 `;
+
+export const StyledStopping = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: ${(props) => props.theme.fontSize4};
+`;

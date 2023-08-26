@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import ReactSlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
@@ -20,12 +20,14 @@ import {
   Shower,
 } from "@app/components";
 
+import { GameState } from "@app/constants";
+
 import { getScrabbleScore } from "@app/helpers/scrabble";
 
 import { StyledApp, StyledGrid } from "./App.styles";
 
 export const App = () => {
-  const [running, setRunning] = useState(false);
+  const [gameState, setGameState] = useState(GameState.Stopped);
   const [foundWords, setFoundWords] = useState([]);
   const [score, setScore] = useState(0);
   const [isInstructionsPaneOpen, setIsInstructionsPaneOpen] = useState(false);
@@ -70,7 +72,7 @@ export const App = () => {
 
   const onStart = () => {
     reset();
-    setRunning(true);
+    setGameState(GameState.Running);
     startSpeechRecognition();
     startActiveLetters();
     startTimeRef.current = performance.now();
@@ -82,7 +84,7 @@ export const App = () => {
   };
 
   const onStop = () => {
-    setRunning(false);
+    setGameState(GameState.Stopping);
     stopSpeechRecognition();
     stopActiveLetters();
     const numWords = new Set(foundWords).size;
@@ -95,6 +97,14 @@ export const App = () => {
       game_length: gameLength,
     });
   };
+
+  useEffect(() => {
+    if (gameState === GameState.Stopping) {
+      if (activeLetters.length === 0) {
+        setGameState(GameState.Stopped);
+      }
+    }
+  }, [gameState, activeLetters]);
 
   const reset = () => {
     setFoundWords([]);
@@ -128,7 +138,7 @@ export const App = () => {
     <StyledApp>
       <StyledGrid>
         <Header
-          message={running ? <Listening /> : null}
+          message={gameState === GameState.Running ? <Listening /> : null}
           onOpenInstructionsPane={openInstructionsPane}
           onOpenSettingsPane={openSettingsPane}
         />
@@ -138,7 +148,7 @@ export const App = () => {
         />
         <FoundWords foundWords={foundWords} />
         <Score score={score} />
-        <Buttons running={running} onStart={onStart} onStop={onStop} />
+        <Buttons gameState={gameState} onStart={onStart} onStop={onStop} />
       </StyledGrid>
 
       <ReactSlidingPane

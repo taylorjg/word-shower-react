@@ -1,21 +1,27 @@
 import PropTypes from "prop-types";
 
-import { StyledButtons } from "./Buttons.styles";
+import { GameState } from "@app/constants";
 
-export const Buttons = ({ running, onStart, onStop }) => {
+import { StyledButtons, StyledStopping } from "./Buttons.styles";
+
+export const Buttons = ({ gameState, onStart, onStop }) => {
   return (
     <StyledButtons>
-      {running ? (
+      {gameState === GameState.Running && (
         <button onClick={onStop}>Stop</button>
-      ) : (
+      )}
+      {gameState === GameState.Stopped && (
         <button onClick={onStart}>Start</button>
+      )}
+      {gameState === GameState.Stopping && (
+        <StyledStopping>Stopping...</StyledStopping>
       )}
     </StyledButtons>
   );
 };
 
 Buttons.propTypes = {
-  running: PropTypes.bool.isRequired,
+  gameState: PropTypes.oneOf(Object.keys(GameState)).isRequired,
   onStart: PropTypes.func.isRequired,
   onStop: PropTypes.func.isRequired,
 };
