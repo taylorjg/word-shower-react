@@ -28,4 +28,7 @@ export const StyledStopping = styled.div`
   justify-content: center;
   align-items: center;
   font-size: ${(props) => props.theme.fontSize4};
+  @media only screen and (max-width: 600px) {
+    font-size: ${(props) => props.theme.fontSize3};
+  }
 `;

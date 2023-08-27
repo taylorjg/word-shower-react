@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faComment } from "@fortawesome/free-regular-svg-icons";
 
 import {
   StyledListening,
@@ -19,7 +20,8 @@ export const Listening = ({ word, isWordValid }) => {
       <StyledLower>
         {word ? (
           <>
-            &quot;{word}&quot;&nbsp;
+            <FontAwesomeIcon icon={faComment} />
+            &nbsp;&quot;{word}&quot;&nbsp;
             <FontAwesomeIcon
               icon={isWordValid ? faCheck : faXmark}
               color={isWordValid ? "green" : "red"}
