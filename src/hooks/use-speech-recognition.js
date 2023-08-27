@@ -29,7 +29,7 @@ export const useSpeechRecognition = (onWord) => {
         .map((s) => s.trim())
         .map((s) => s.toLowerCase());
       const word = words[0];
-      if (onWordRef.current) {
+      if (word && onWordRef.current) {
         onWordRef.current(word);
       }
     };

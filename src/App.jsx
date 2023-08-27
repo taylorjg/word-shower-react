@@ -32,6 +32,7 @@ export const App = () => {
   const [score, setScore] = useState(0);
   const [isInstructionsPaneOpen, setIsInstructionsPaneOpen] = useState(false);
   const [isSettingsPaneOpen, setIsSettingsPaneOpen] = useState(false);
+  const lastCandidateWordRef = useRef();
   const lastWordAddedRef = useRef();
   const [settings, setSettings] = useState({
     newLetterRate: 400,
@@ -54,6 +55,7 @@ export const App = () => {
         activeLetters: activeLetters.map(({ letter }) => letter).join(""),
       });
       if (word.length >= 4 && word !== lastWordAdded) {
+        lastCandidateWordRef.current = word;
         if (checkWord(word, activeLetters, settings.strictMode)) {
           setFoundWords((currentFoundWords) => [word, ...currentFoundWords]);
           lastWordAddedRef.current = word;
@@ -109,6 +111,7 @@ export const App = () => {
   const reset = () => {
     setFoundWords([]);
     lastWordAddedRef.current = undefined;
+    lastCandidateWordRef.current = undefined;
     setScore(0);
   };
 
@@ -138,7 +141,16 @@ export const App = () => {
     <StyledApp>
       <StyledGrid>
         <Header
-          message={gameState === GameState.Running ? <Listening /> : null}
+          message={
+            gameState === GameState.Running ? (
+              <Listening
+                word={lastCandidateWordRef.current}
+                isWordValid={
+                  lastCandidateWordRef.current === lastWordAddedRef.current
+                }
+              />
+            ) : null
+          }
           onOpenInstructionsPane={openInstructionsPane}
           onOpenSettingsPane={openSettingsPane}
         />
