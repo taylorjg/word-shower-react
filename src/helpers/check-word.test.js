@@ -1,61 +1,43 @@
 import { checkWord } from "./check-word";
 
+const makeActiveLetters = (letters) => {
+  return Array.from(letters).map((letter, id) => ({
+    id,
+    letter,
+  }));
+};
+
 describe("checkWord tests", () => {
   describe("strictMode false", () => {
+    const strictMode = false;
+
     it("valid word", () => {
-      const activeLetterWrappers = [
-        { id: 0, letter: "A" },
-        { id: 1, letter: "K" },
-        { id: 2, letter: "B" },
-        { id: 3, letter: "I" },
-        { id: 4, letter: "C" },
-        { id: 5, letter: "S" },
-        { id: 6, letter: "D" },
-      ];
-      expect(checkWord("KISS", activeLetterWrappers, false)).toBe(true);
+      const activeLetterWrappers = makeActiveLetters("akbicsd");
+      expect(checkWord("kiss", activeLetterWrappers, strictMode)).toBe(true);
     });
 
-    it("invalid word (Z not in list of active letters)", () => {
-      const activeLetterWrappers = [
-        { id: 0, letter: "A" },
-        { id: 1, letter: "K" },
-        { id: 2, letter: "B" },
-        { id: 3, letter: "I" },
-        { id: 4, letter: "C" },
-        { id: 5, letter: "S" },
-        { id: 6, letter: "D" },
-      ];
-      expect(checkWord("KIZZ", activeLetterWrappers, false)).toBe(false);
+    it("invalid word ('z' not in list of active letters)", () => {
+      const activeLetterWrappers = makeActiveLetters("akbicsd");
+      expect(checkWord("kizz", activeLetterWrappers, strictMode)).toBe(false);
     });
   });
 
   describe("strictMode true", () => {
+    const strictMode = true;
+
     it("valid word", () => {
-      const activeLetterWrappers = [
-        { id: 0, letter: "A" },
-        { id: 1, letter: "K" },
-        { id: 2, letter: "B" },
-        { id: 3, letter: "I" },
-        { id: 4, letter: "C" },
-        { id: 5, letter: "S" },
-        { id: 6, letter: "D" },
-        { id: 7, letter: "S" },
-        { id: 8, letter: "E" },
-      ];
-      expect(checkWord("KISS", activeLetterWrappers, true)).toBe(true);
+      const activeLetterWrappers = makeActiveLetters("akbicsdse");
+      expect(checkWord("kiss", activeLetterWrappers, strictMode)).toBe(true);
     });
 
-    it("invalid word (second S missing from list of active letters)", () => {
-      const activeLetterWrappers = [
-        { id: 0, letter: "A" },
-        { id: 1, letter: "K" },
-        { id: 2, letter: "B" },
-        { id: 3, letter: "I" },
-        { id: 4, letter: "C" },
-        { id: 5, letter: "S" },
-        { id: 6, letter: "D" },
-      ];
-      expect(checkWord("KISS", activeLetterWrappers, true)).toBe(false);
+    it("invalid word ('z' not in list of active letters)", () => {
+      const activeLetterWrappers = makeActiveLetters("akbicsd");
+      expect(checkWord("KIZZ", activeLetterWrappers, strictMode)).toBe(false);
+    });
+
+    it("invalid word (second 's' missing from list of active letters)", () => {
+      const activeLetterWrappers = makeActiveLetters("akbicsd");
+      expect(checkWord("kiss", activeLetterWrappers, strictMode)).toBe(false);
     });
   });
 });
