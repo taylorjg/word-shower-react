@@ -11,12 +11,12 @@ export const makeGameActions = (
   game.events.on("LETTER_REMOVED", onLetterRemoved);
 
   return {
-    start: () => {
-      game.events.emit("START");
-    },
-    stop: () => {
-      game.events.emit("STOP");
-    },
+    // start: () => {
+    //   game.events.emit("START");
+    // },
+    // stop: () => {
+    //   game.events.emit("STOP");
+    // },
     addLetter: (id, letter, value, letterFallSpeed) => {
       game.events.emit("ADD_LETTER", id, letter, value, letterFallSpeed);
     },
@@ -29,19 +29,48 @@ class ShowerScene extends Phaser.Scene {
     console.log("[ShowerScene#constructor]");
     super("ShowerScene");
     this.lastLetterFallSpeed = -1;
-    this.running = false;
+    // this.running = false;
+    this.letterTileContainers = [];
   }
 
   create() {
     console.log("[ShowerScene#create]");
-    this.game.events.on("START", this.onStart.bind(this));
-    this.game.events.on("STOP", this.onStop.bind(this));
+    // this.game.events.on("START", this.onStart.bind(this));
+    // this.game.events.on("STOP", this.onStop.bind(this));
     this.game.events.on("ADD_LETTER", this.onAddLetter.bind(this));
   }
 
   update(_time, delta) {
-    // if (!this.running) return;
-    if (this.lastLetterFallSpeed >= 0) {
+    if (this.letterTileContainers.length > 0 && this.lastLetterFallSpeed >= 0) {
+      const canvasHeight = this.sys.game.canvas.height;
+      const top = this.cameras.main.scrollY;
+      const bottom = top + canvasHeight;
+
+      const itemHasLostVisibility = (item) => {
+        return item.y > bottom;
+      };
+
+      const clonedArray = this.letterTileContainers.slice();
+      const itemsToDestroy = [];
+
+      for (const clonedArrayItem of clonedArray) {
+        if (itemHasLostVisibility(clonedArrayItem)) {
+          itemsToDestroy.push(clonedArrayItem);
+          const index = this.letterTileContainers.findIndex(
+            (item) => item === clonedArrayItem
+          );
+          if (index >= 0) {
+            this.letterTileContainers.splice(index, 1);
+          }
+        }
+      }
+
+      for (const item of itemsToDestroy) {
+        const id = item.getData("id");
+        item.destroy(true);
+        this.game.events.emit("LETTER_REMOVED", id);
+      }
+
       const distanceToFall = this.sys.game.canvas.height;
       const letterFallSpeedFrameCount = this.lastLetterFallSpeed / delta;
       const fallDelta = distanceToFall / letterFallSpeedFrameCount;
@@ -49,16 +78,16 @@ class ShowerScene extends Phaser.Scene {
     }
   }
 
-  onStart() {
-    console.log("[ShowerScene#onStart]");
-    this.running = true;
-    this.cameras.main.scrollY = 0;
-  }
+  // onStart() {
+  //   console.log("[ShowerScene#onStart]");
+  //   this.running = true;
+  //   this.cameras.main.scrollY = 0;
+  // }
 
-  onStop() {
-    console.log("[ShowerScene#onStop]");
-    this.running = false;
-  }
+  // onStop() {
+  //   console.log("[ShowerScene#onStop]");
+  //   this.running = false;
+  // }
 
   onAddLetter(id, letter, value, letterFallSpeed) {
     console.log("[ShowerScene#onAddLetter]", {
@@ -105,17 +134,8 @@ class ShowerScene extends Phaser.Scene {
     const children = [letterTile, letterText, valueText];
     const letterTileContainer = this.add.container(x, y, children);
     letterTileContainer.postFX.addShadow(0, 1, 0.05);
-
-    // TODO: instead of waiting an explicit amount of time:
-    // - maintain an array of letterTileContainer
-    // - in update(), check each outstanding letterTileContainer
-    // - if a letterTileContainer is no longer visible then:
-    //  - destroy it
-    //  - emit a LETTER_REMOVED event passing id
-    this.time.delayedCall(letterFallSpeed, () => {
-      letterTileContainer.destroy(true);
-      this.game.events.emit("LETTER_REMOVED", id);
-    });
+    letterTileContainer.setData("id", id);
+    this.letterTileContainers.push(letterTileContainer);
   }
 }
 

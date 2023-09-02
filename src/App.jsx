@@ -96,8 +96,8 @@ export const App = () => {
       gameActionsRef.current = makeGameActions(game);
     }
     reset();
+    // gameActionsRef.current.start();
     setGameState(GameState.Running);
-    gameActionsRef.current.addLetter("a", 1, 5000);
     startSpeechRecognition();
     startActiveLetters();
     startTimeRef.current = performance.now();
@@ -127,6 +127,7 @@ export const App = () => {
     if (gameState === GameState.Stopping) {
       if (activeLetters.length === 0) {
         setGameState(GameState.Stopped);
+        // gameActionsRef.current.stop();
       }
     }
   }, [gameState, activeLetters]);
