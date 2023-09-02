@@ -8,6 +8,7 @@ import { useAnalytics } from "@app/hooks/use-analytics";
 import { useSpeechRecognition } from "@app/hooks/use-speech-recognition";
 
 import { checkWord } from "@app/helpers/check-word";
+import { lookupLetterValue } from "@app/helpers/scrabble";
 
 import {
   Buttons,
@@ -19,6 +20,8 @@ import {
   SettingsPane,
   Shower,
 } from "@app/components";
+
+import { initGame, makeGameActions } from "@app/phaser";
 
 import { GameState } from "@app/constants";
 
@@ -40,9 +43,15 @@ export const App = () => {
     strictMode: false,
   });
   const startTimeRef = useRef();
+  const gameActionsRef = useRef();
+
+  const onAddLetter = useCallback((letter) => {
+    const value = lookupLetterValue(letter);
+    gameActionsRef.current?.addLetter(letter, value, 5000);
+  }, []);
 
   const { activeLetters, startActiveLetters, stopActiveLetters } =
-    useActiveLetters(settings);
+    useActiveLetters(settings, onAddLetter);
 
   const isSmallDevice = useMediaQuery("only screen and (max-width: 600px)");
 
@@ -73,8 +82,13 @@ export const App = () => {
   const { sendAnalyticsClickEvent } = useAnalytics();
 
   const onStart = () => {
+    if (!gameActionsRef.current) {
+      const game = initGame();
+      gameActionsRef.current = makeGameActions(game);
+    }
     reset();
     setGameState(GameState.Running);
+    gameActionsRef.current.addLetter("a", 1, 5000);
     startSpeechRecognition();
     startActiveLetters();
     startTimeRef.current = performance.now();

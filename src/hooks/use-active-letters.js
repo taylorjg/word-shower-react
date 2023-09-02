@@ -4,12 +4,15 @@ import { getRandomLetter } from "@app/helpers/scrabble";
 
 const SPEECH_RECOGNITION_DELAY = 2000;
 
-export const useActiveLetters = (settings) => {
+export const useActiveLetters = (settings, onAddLetter) => {
   const [activeLetters, setActiveLetters] = useState([]);
   const callCountRef = useRef(0);
   const stopPendingRef = useRef(false);
   const intervalIdRef = useRef(false);
   const nextIdRef = useRef(0);
+  const onAddLetterRef = useRef();
+
+  onAddLetterRef.current = onAddLetter;
 
   const getNextId = () => {
     return nextIdRef.current++;
@@ -51,6 +54,7 @@ export const useActiveLetters = (settings) => {
             id: getNextId(),
             letter: getRandomLetter(),
           };
+          onAddLetterRef.current?.(newLetterWrapper.letter);
           if (callCountRef.current >= minCallCount) {
             const [, ...remainingLetterWrappers] = currentActiveLetters;
             return [...remainingLetterWrappers, newLetterWrapper];

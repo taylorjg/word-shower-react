@@ -8,12 +8,14 @@ import { GlobalStyles, theme } from "./components/Global.styles.js";
 const root = document.getElementById("root");
 
 ReactDOM.createRoot(root).render(
-  <React.StrictMode>
+  // <React.StrictMode>
+  <>
     <GlobalStyles />
     <ThemeProvider theme={theme}>
       <App />
     </ThemeProvider>
-  </React.StrictMode>
+  </>
+  // </React.StrictMode>
 );
 
 if (window.location.hostname === "taylorjg.github.io") {

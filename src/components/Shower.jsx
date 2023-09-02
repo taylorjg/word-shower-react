@@ -6,7 +6,7 @@ import { StyledShower } from "./Shower.styles";
 export const Shower = ({ letterWrappers, letterFallSpeed }) => {
   return (
     <StyledShower>
-      {letterWrappers.map(({ id, letter }) => {
+      {/* {letterWrappers.map(({ id, letter }) => {
         return (
           <MemoizedAnimatedLetter
             key={id}
@@ -14,7 +14,7 @@ export const Shower = ({ letterWrappers, letterFallSpeed }) => {
             letterFallSpeed={letterFallSpeed}
           />
         );
-      })}
+      })} */}
     </StyledShower>
   );
 };
