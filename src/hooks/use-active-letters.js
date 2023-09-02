@@ -54,7 +54,7 @@ export const useActiveLetters = (settings, onAddLetter) => {
             id: getNextId(),
             letter: getRandomLetter(),
           };
-          onAddLetterRef.current?.(newLetterWrapper.letter);
+          onAddLetterRef.current?.(newLetterWrapper);
           if (callCountRef.current >= minCallCount) {
             const [, ...remainingLetterWrappers] = currentActiveLetters;
             return [...remainingLetterWrappers, newLetterWrapper];

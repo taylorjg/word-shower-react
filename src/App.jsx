@@ -45,10 +45,19 @@ export const App = () => {
   const startTimeRef = useRef();
   const gameActionsRef = useRef();
 
-  const onAddLetter = useCallback((letter) => {
-    const value = lookupLetterValue(letter);
-    gameActionsRef.current?.addLetter(letter, value, 5000);
-  }, []);
+  const onAddLetter = useCallback(
+    (letterWrapper) => {
+      const { id, letter } = letterWrapper;
+      const value = lookupLetterValue(letter);
+      gameActionsRef.current?.addLetter(
+        id,
+        letter,
+        value,
+        settings.letterFallSpeed
+      );
+    },
+    [settings.letterFallSpeed]
+  );
 
   const { activeLetters, startActiveLetters, stopActiveLetters } =
     useActiveLetters(settings, onAddLetter);

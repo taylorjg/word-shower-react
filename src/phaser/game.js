@@ -1,10 +1,26 @@
 import * as Phaser from "phaser";
 
-export const makeGameActions = (game) => {
+const defaultLetterRemovedHandler = (id) => {
+  console.log("[defaultLetterRemovedHandler]", { id });
+};
+
+export const makeGameActions = (
+  game,
+  onLetterRemoved = defaultLetterRemovedHandler
+) => {
+  game.events.on("LETTER_REMOVED", onLetterRemoved);
+
   return {
-    addLetter: (letter, value, letterFallSpeed) => {
-      game.events.emit("ADD_LETTER", letter, value, letterFallSpeed);
+    start: () => {
+      game.events.emit("START");
     },
+    stop: () => {
+      game.events.emit("STOP");
+    },
+    addLetter: (id, letter, value, letterFallSpeed) => {
+      game.events.emit("ADD_LETTER", id, letter, value, letterFallSpeed);
+    },
+    // setLetterFallSpeed ?
   };
 };
 
@@ -12,23 +28,52 @@ class ShowerScene extends Phaser.Scene {
   constructor() {
     console.log("[ShowerScene#constructor]");
     super("ShowerScene");
+    this.lastLetterFallSpeed = -1;
+    this.running = false;
   }
 
   create() {
     console.log("[ShowerScene#create]");
+    this.game.events.on("START", this.onStart.bind(this));
+    this.game.events.on("STOP", this.onStop.bind(this));
     this.game.events.on("ADD_LETTER", this.onAddLetter.bind(this));
   }
 
-  onAddLetter(letter, value, letterFallSpeed) {
+  update(_time, delta) {
+    // if (!this.running) return;
+    if (this.lastLetterFallSpeed >= 0) {
+      const distanceToFall = this.sys.game.canvas.height;
+      const letterFallSpeedFrameCount = this.lastLetterFallSpeed / delta;
+      const fallDelta = distanceToFall / letterFallSpeedFrameCount;
+      this.cameras.main.scrollY -= fallDelta;
+    }
+  }
+
+  onStart() {
+    console.log("[ShowerScene#onStart]");
+    this.running = true;
+    this.cameras.main.scrollY = 0;
+  }
+
+  onStop() {
+    console.log("[ShowerScene#onStop]");
+    this.running = false;
+  }
+
+  onAddLetter(id, letter, value, letterFallSpeed) {
     console.log("[ShowerScene#onAddLetter]", {
+      id,
       letter,
       value,
       letterFallSpeed,
     });
 
-    const { width: canvasWidth, height: canvasHeight } = this.sys.game.canvas;
+    this.lastLetterFallSpeed = letterFallSpeed;
+
+    const canvasWidth = this.sys.game.canvas.width;
 
     const SIZE = 50;
+    const MARGIN = 5;
 
     const letterTile = this.add.graphics();
     letterTile.fillStyle(0xffe4c4); // Bisque
@@ -54,24 +99,22 @@ class ShowerScene extends Phaser.Scene {
       .text(SIZE * 0.85, SIZE * 0.8, value.toString(), valueTextStyle)
       .setOrigin(0.5);
 
-    const randomX = Math.floor((canvasWidth - SIZE) * Math.random());
+    const availableWidth = canvasWidth - 2 * MARGIN - SIZE;
+    const x = MARGIN + Math.floor(availableWidth * Math.random());
+    const y = this.cameras.main.scrollY;
+    const children = [letterTile, letterText, valueText];
+    const letterTileContainer = this.add.container(x, y, children);
+    letterTileContainer.postFX.addShadow(0, 1, 0.05);
 
-    const letterTileContainer = this.add.container(randomX, 0, [
-      letterTile,
-      letterText,
-      valueText,
-    ]);
-
-    letterTileContainer.postFX.addShadow(0, 1, 0.02);
-
-    this.tweens.add({
-      targets: letterTileContainer,
-      duration: letterFallSpeed,
-      ease: "Linear",
-      y: canvasHeight * 1.02,
-      onComplete: () => {
-        letterTileContainer.destroy(true);
-      },
+    // TODO: instead of waiting an explicit amount of time:
+    // - maintain an array of letterTileContainer
+    // - in update(), check each outstanding letterTileContainer
+    // - if a letterTileContainer is no longer visible then:
+    //  - destroy it
+    //  - emit a LETTER_REMOVED event passing id
+    this.time.delayedCall(letterFallSpeed, () => {
+      letterTileContainer.destroy(true);
+      this.game.events.emit("LETTER_REMOVED", id);
     });
   }
 }
