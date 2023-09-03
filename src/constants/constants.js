@@ -3,3 +3,9 @@ export const GameState = Object.freeze({
   Running: "Running",
   Stopping: "Stopping",
 });
+
+export const DEFAULT_SETTINGS = {
+  newLetterRate: 400,
+  letterFallSpeed: 5000,
+  strictMode: false,
+};

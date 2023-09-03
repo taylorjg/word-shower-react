@@ -23,7 +23,7 @@ import {
 
 import { initGame, makeGameActions } from "@app/phaser";
 
-import { GameState } from "@app/constants";
+import { GameState, DEFAULT_SETTINGS } from "@app/constants";
 
 import { getScrabbleScore } from "@app/helpers/scrabble";
 
@@ -37,11 +37,7 @@ export const App = () => {
   const [isSettingsPaneOpen, setIsSettingsPaneOpen] = useState(false);
   const lastCandidateWordRef = useRef();
   const lastWordAddedRef = useRef();
-  const [settings, setSettings] = useState({
-    newLetterRate: 400,
-    letterFallSpeed: 5000,
-    strictMode: false,
-  });
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const startTimeRef = useRef();
   const gameActionsRef = useRef();
 
@@ -51,8 +47,12 @@ export const App = () => {
     gameActionsRef.current?.addLetter(id, letter, value);
   }, []);
 
-  const { activeLetters, startActiveLetters, stopActiveLetters } =
-    useActiveLetters(settings, onAddLetter);
+  const {
+    activeLetters,
+    onLetterRemoved,
+    startActiveLetters,
+    stopActiveLetters,
+  } = useActiveLetters(settings, onAddLetter);
 
   const isSmallDevice = useMediaQuery("only screen and (max-width: 600px)");
 
@@ -85,7 +85,7 @@ export const App = () => {
   const onStart = () => {
     if (!gameActionsRef.current) {
       const game = initGame(settings.letterFallSpeed);
-      gameActionsRef.current = makeGameActions(game);
+      gameActionsRef.current = makeGameActions(game, onLetterRemoved);
     }
     reset();
     gameActionsRef.current.start(settings.letterFallSpeed);
@@ -123,6 +123,12 @@ export const App = () => {
       }
     }
   }, [gameState, activeLetters]);
+
+  useEffect(() => {
+    if (gameActionsRef.current) {
+      gameActionsRef.current.setLetterFallSpeed(settings.letterFallSpeed);
+    }
+  }, [settings.letterFallSpeed]);
 
   const reset = () => {
     setFoundWords([]);
