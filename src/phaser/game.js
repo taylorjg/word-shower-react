@@ -68,14 +68,14 @@ class ShowerScene extends Phaser.Scene {
         firstItem.destroy(true);
         this.game.events.emit("LETTER_REMOVED", id);
       }
-
-      const delta = time - this.previousTime;
-      this.previousTime = time;
-      const distanceToFall = this.sys.game.canvas.height;
-      const letterFallSpeedFrameCount = this.letterFallSpeed / delta;
-      const fallDelta = distanceToFall / letterFallSpeedFrameCount;
-      this.cameras.main.scrollY -= fallDelta;
     }
+
+    const delta = time - this.previousTime;
+    this.previousTime = time;
+    const distanceToFall = this.sys.game.canvas.height;
+    const letterFallSpeedFrameCount = this.letterFallSpeed / delta;
+    const fallDelta = distanceToFall / letterFallSpeedFrameCount;
+    this.cameras.main.scrollY -= fallDelta;
   }
 
   onStart(letterFallSpeed) {
@@ -145,8 +145,8 @@ const gameConfig = {
     mode: Phaser.Scale.FIT,
     // mode: Phaser.Scale.RESIZE,
   },
-  backgroundColor: 0xffffff,
   parent: "shower-panel",
+  transparent: true,
   expandParent: false,
   // canvasStyle: "display: block; padding: 0.25rem;",
   canvasStyle: "display: block; padding: 0; margin: 0;",
