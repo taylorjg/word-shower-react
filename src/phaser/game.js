@@ -128,7 +128,7 @@ class ShowerScene extends Phaser.Scene {
 
     const availableWidth = canvasWidth - 2 * MARGIN - SIZE;
     const x = MARGIN + Math.floor(availableWidth * Math.random());
-    const y = this.cameras.main.scrollY;
+    const y = this.cameras.main.scrollY - SIZE / 5;
     const children = [letterTile, letterText, valueText];
     const letterTileContainer = this.add.container(x, y, children);
     letterTileContainer.postFX.addShadow(0, 1, 0.05);
