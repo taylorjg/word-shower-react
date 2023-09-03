@@ -45,19 +45,11 @@ export const App = () => {
   const startTimeRef = useRef();
   const gameActionsRef = useRef();
 
-  const onAddLetter = useCallback(
-    (letterWrapper) => {
-      const { id, letter } = letterWrapper;
-      const value = lookupLetterValue(letter);
-      gameActionsRef.current?.addLetter(
-        id,
-        letter,
-        value,
-        settings.letterFallSpeed
-      );
-    },
-    [settings.letterFallSpeed]
-  );
+  const onAddLetter = useCallback((letterWrapper) => {
+    const { id, letter } = letterWrapper;
+    const value = lookupLetterValue(letter);
+    gameActionsRef.current?.addLetter(id, letter, value);
+  }, []);
 
   const { activeLetters, startActiveLetters, stopActiveLetters } =
     useActiveLetters(settings, onAddLetter);
@@ -92,11 +84,11 @@ export const App = () => {
 
   const onStart = () => {
     if (!gameActionsRef.current) {
-      const game = initGame();
+      const game = initGame(settings.letterFallSpeed);
       gameActionsRef.current = makeGameActions(game);
     }
     reset();
-    // gameActionsRef.current.start();
+    gameActionsRef.current.start(settings.letterFallSpeed);
     setGameState(GameState.Running);
     startSpeechRecognition();
     startActiveLetters();
@@ -109,6 +101,7 @@ export const App = () => {
   };
 
   const onStop = () => {
+    gameActionsRef.current.setLetterFallSpeed(settings.letterFallSpeed / 2);
     setGameState(GameState.Stopping);
     stopSpeechRecognition();
     stopActiveLetters();
@@ -127,7 +120,6 @@ export const App = () => {
     if (gameState === GameState.Stopping) {
       if (activeLetters.length === 0) {
         setGameState(GameState.Stopped);
-        // gameActionsRef.current.stop();
       }
     }
   }, [gameState, activeLetters]);
@@ -178,10 +170,7 @@ export const App = () => {
           onOpenInstructionsPane={openInstructionsPane}
           onOpenSettingsPane={openSettingsPane}
         />
-        <Shower
-          letterWrappers={activeLetters}
-          letterFallSpeed={settings.letterFallSpeed}
-        />
+        <Shower />
         <FoundWords foundWords={foundWords} />
         <Score score={score} />
         <Buttons gameState={gameState} onStart={onStart} onStop={onStop} />
