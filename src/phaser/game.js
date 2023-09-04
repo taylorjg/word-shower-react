@@ -1,13 +1,6 @@
 import * as Phaser from "phaser";
 
-const defaultLetterRemovedHandler = (id) => {
-  console.log("[defaultLetterRemovedHandler]", { id });
-};
-
-export const makeGameActions = (
-  game,
-  onLetterRemoved = defaultLetterRemovedHandler
-) => {
+export const makeGameActions = (game, onLetterRemoved) => {
   game.events.on("LETTER_REMOVED", onLetterRemoved);
 
   return {
@@ -137,19 +130,24 @@ class ShowerScene extends Phaser.Scene {
   }
 }
 
+const GAP = "0.25rem";
+
 const gameConfig = {
   type: Phaser.AUTO,
   scale: {
     width: "100%",
     height: "100%",
-    mode: Phaser.Scale.FIT,
-    // mode: Phaser.Scale.RESIZE,
+    mode: Phaser.Scale.NONE,
   },
   parent: "shower-panel",
   transparent: true,
-  expandParent: false,
-  // canvasStyle: "display: block; padding: 0.25rem;",
-  canvasStyle: "display: block; padding: 0; margin: 0;",
+  canvasStyle: `
+    display: block;
+    width: calc(100% - ${GAP});
+    height: calc(100% - ${GAP});
+    margin-top: calc(${GAP} / 2);
+    margin-left: calc(${GAP} / 2);
+  `,
 };
 
 export const initGame = (letterFallSpeed) => {

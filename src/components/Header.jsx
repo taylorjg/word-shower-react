@@ -3,7 +3,12 @@ import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleQuestion, faGear } from "@fortawesome/free-solid-svg-icons";
 
-import { StyledHeader, StyledIcon, StyledMessage } from "./Header.styles";
+import {
+  StyledHeader,
+  StyledIconWrapper,
+  StyledIcon,
+  StyledMessage,
+} from "./Header.styles";
 
 export const Header = ({
   message,
@@ -12,16 +17,20 @@ export const Header = ({
 }) => {
   return (
     <StyledHeader>
-      <StyledIcon>
-        <FontAwesomeIcon
-          icon={faCircleQuestion}
-          onClick={onOpenInstructionsPane}
-        />
-      </StyledIcon>
+      <StyledIconWrapper>
+        <StyledIcon>
+          <FontAwesomeIcon
+            icon={faCircleQuestion}
+            onClick={onOpenInstructionsPane}
+          />
+        </StyledIcon>
+      </StyledIconWrapper>
       <StyledMessage>{message}</StyledMessage>
-      <StyledIcon>
-        <FontAwesomeIcon icon={faGear} onClick={onOpenSettingsPane} />
-      </StyledIcon>
+      <StyledIconWrapper>
+        <StyledIcon>
+          <FontAwesomeIcon icon={faGear} onClick={onOpenSettingsPane} />
+        </StyledIcon>
+      </StyledIconWrapper>
     </StyledHeader>
   );
 };

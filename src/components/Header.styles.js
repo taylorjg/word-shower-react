@@ -7,6 +7,12 @@ export const StyledHeader = styled(StyledPanel)`
   display: grid;
   grid-template-columns: auto 1fr auto;
   font-size: ${(props) => props.theme.fontSize5};
+  height: 3rem;
+`;
+
+export const StyledIconWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 export const StyledIcon = styled.div`
