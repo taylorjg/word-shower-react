@@ -1,3 +1,5 @@
+/* global confetti */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import ReactSlidingPane from "react-sliding-pane";
@@ -71,6 +73,11 @@ export const App = () => {
           lastWordAddedRef.current = word;
           const wordScore = getScrabbleScore(word);
           setScore((currentScore) => currentScore + wordScore);
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
         }
       }
     },
