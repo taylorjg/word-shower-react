@@ -68,7 +68,7 @@ class ShowerScene extends Phaser.Scene {
     const distanceToFall = this.sys.game.canvas.height;
     const letterFallSpeedFrameCount = this.letterFallSpeed / delta;
     const fallDelta = distanceToFall / letterFallSpeedFrameCount;
-    this.cameras.main.scrollY -= fallDelta;
+    this.cameras.main.scrollY -= Math.round(fallDelta);
   }
 
   onStart(letterFallSpeed) {
