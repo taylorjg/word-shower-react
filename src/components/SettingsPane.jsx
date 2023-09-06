@@ -24,6 +24,11 @@ export const SettingsPane = ({ onClose, settings, onChangeSettings }) => {
     onChangeSettings({ ...settings, strictMode });
   };
 
+  const onChangeEnableConfetti = (e) => {
+    const enableConfetti = Boolean(e.target.checked);
+    onChangeSettings({ ...settings, enableConfetti });
+  };
+
   return (
     <Pane title="Settings" onClose={onClose}>
       <StyledSettings>
@@ -78,6 +83,19 @@ export const SettingsPane = ({ onClose, settings, onChangeSettings }) => {
             letter &quot;S&quot; must appear twice in the list of active letters
           </StyledSettingExplanation>
         </StyledSetting>
+        <StyledSetting>
+          <label htmlFor="enable-confetti">Enable Confetti</label>
+          <input
+            type="checkbox"
+            id="enable-confetti"
+            checked={settings.enableConfetti}
+            onChange={onChangeEnableConfetti}
+          />
+          <StyledSettingExplanation>
+            When enabled, show an animated confetti explosion each time a word
+            is found
+          </StyledSettingExplanation>
+        </StyledSetting>
       </StyledSettings>
     </Pane>
   );
@@ -89,6 +107,7 @@ SettingsPane.propTypes = {
     newLetterRate: PropTypes.number.isRequired,
     letterFallSpeed: PropTypes.number.isRequired,
     strictMode: PropTypes.bool.isRequired,
+    enableConfetti: PropTypes.bool.isRequired,
   }).isRequired,
   onChangeSettings: PropTypes.func.isRequired,
 };

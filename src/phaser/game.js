@@ -148,6 +148,12 @@ const gameConfig = {
     margin-top: calc(${GAP} / 2);
     margin-left: calc(${GAP} / 2);
   `,
+  render: {
+    clearBeforeRender: false,
+  },
+  fps: {
+    target: 30,
+  },
 };
 
 export const initGame = (letterFallSpeed) => {

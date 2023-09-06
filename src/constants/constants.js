@@ -5,7 +5,8 @@ export const GameState = Object.freeze({
 });
 
 export const DEFAULT_SETTINGS = {
-  newLetterRate: 400,
+  newLetterRate: 500,
   letterFallSpeed: 5000,
   strictMode: false,
+  enableConfetti: false,
 };

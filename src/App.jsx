@@ -10,7 +10,7 @@ import { useAnalytics } from "@app/hooks/use-analytics";
 import { useSpeechRecognition } from "@app/hooks/use-speech-recognition";
 
 import { checkWord } from "@app/helpers/check-word";
-import { lookupLetterValue } from "@app/helpers/scrabble";
+import { getScrabbleScore, lookupLetterValue } from "@app/helpers/scrabble";
 
 import {
   Buttons,
@@ -26,8 +26,6 @@ import {
 import { initGame, makeGameActions } from "@app/phaser";
 
 import { GameState, DEFAULT_SETTINGS } from "@app/constants";
-
-import { getScrabbleScore } from "@app/helpers/scrabble";
 
 import { StyledApp, StyledGrid } from "./App.styles";
 
@@ -73,11 +71,13 @@ export const App = () => {
           lastWordAddedRef.current = word;
           const wordScore = getScrabbleScore(word);
           setScore((currentScore) => currentScore + wordScore);
-          confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 },
-          });
+          if (settings.enableConfetti) {
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 },
+            });
+          }
         }
       }
     },
