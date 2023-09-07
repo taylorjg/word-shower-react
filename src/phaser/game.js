@@ -18,19 +18,18 @@ export const makeGameActions = (game, onLetterRemoved) => {
 
 class ShowerScene extends Phaser.Scene {
   constructor() {
-    console.log("[ShowerScene#constructor]");
+    // console.log("[ShowerScene#constructor]");
     super("ShowerScene");
-    this.previousTime = -1;
     this.letterTileContainers = [];
   }
 
   init(data) {
-    console.log("[ShowerScene#init]", data);
+    // console.log("[ShowerScene#init]", data);
     this.letterFallSpeed = data.letterFallSpeed;
   }
 
   create() {
-    console.log("[ShowerScene#create]");
+    // console.log("[ShowerScene#create]");
     this.game.events.on("START", this.onStart.bind(this));
     this.game.events.on("ADD_LETTER", this.onAddLetter.bind(this));
     this.game.events.on(
@@ -39,12 +38,7 @@ class ShowerScene extends Phaser.Scene {
     );
   }
 
-  update(time) {
-    if (this.previousTime < 0) {
-      this.previousTime = time;
-      return;
-    }
-
+  update(time, delta) {
     if (this.letterTileContainers.length > 0) {
       const canvasHeight = this.sys.game.canvas.height;
       const top = this.cameras.main.scrollY;
@@ -63,32 +57,29 @@ class ShowerScene extends Phaser.Scene {
       }
     }
 
-    const delta = time - this.previousTime;
-    this.previousTime = time;
     const distanceToFall = this.sys.game.canvas.height;
     const letterFallSpeedFrameCount = this.letterFallSpeed / delta;
     const fallDelta = distanceToFall / letterFallSpeedFrameCount;
-    this.cameras.main.scrollY -= Math.round(fallDelta);
+    this.cameras.main.scrollY -= fallDelta;
   }
 
   onStart(letterFallSpeed) {
-    console.log("[ShowerScene#onStart]", { letterFallSpeed });
+    // console.log("[ShowerScene#onStart]", { letterFallSpeed });
     this.cameras.main.scrollY = 0;
-    this.previousTime = -1;
     this.letterFallSpeed = letterFallSpeed;
   }
 
   onSetLetterFallSpeed(letterFallSpeed) {
-    console.log("[ShowerScene#onSetLetterFallSpeed]", { letterFallSpeed });
+    // console.log("[ShowerScene#onSetLetterFallSpeed]", { letterFallSpeed });
     this.letterFallSpeed = letterFallSpeed;
   }
 
   onAddLetter(id, letter, value) {
-    console.log("[ShowerScene#onAddLetter]", {
-      id,
-      letter,
-      value,
-    });
+    // console.log("[ShowerScene#onAddLetter]", {
+    //   id,
+    //   letter,
+    //   value,
+    // });
 
     const canvasWidth = this.sys.game.canvas.width;
 
@@ -148,12 +139,6 @@ const gameConfig = {
     margin-top: calc(${GAP} / 2);
     margin-left: calc(${GAP} / 2);
   `,
-  render: {
-    clearBeforeRender: false,
-  },
-  fps: {
-    target: 30,
-  },
 };
 
 export const initGame = (letterFallSpeed) => {

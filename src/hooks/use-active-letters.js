@@ -29,7 +29,7 @@ export const useActiveLetters = (settings, onAddLetter) => {
 
   const onLetterRemoved = useCallback((id) => {
     const removeLetter = (id) => {
-      console.log("[removeLetter]", { id });
+      // console.log("[removeLetter]", { id });
       setActiveLetters((currentActiveLetters) =>
         currentActiveLetters.filter((item) => item.id !== id)
       );

@@ -9,19 +9,19 @@ export const useSpeechRecognition = (onWord) => {
   const onWordRef = useRef();
 
   const start = useCallback(() => {
-    const onStart = (event) => {
-      console.log("[onStart]", event);
+    const onStart = (/* event */) => {
+      // console.log("[onStart]", event);
     };
 
-    const onEnd = (event) => {
-      console.log("[onEnd]", event);
+    const onEnd = (/* event */) => {
+      // console.log("[onEnd]", event);
       if (recognitionRef.current && runningRef.current) {
         recognitionRef.current.start();
       }
     };
 
     const onResult = (event) => {
-      console.log("[onResult]", event);
+      // console.log("[onResult]", event);
       const result = event.results[event.resultIndex][0];
       const words = result.transcript
         .trim()
@@ -34,12 +34,12 @@ export const useSpeechRecognition = (onWord) => {
       }
     };
 
-    const onNoMatch = (event) => {
-      console.log("[onNoMatch]", event);
+    const onNoMatch = (/* event */) => {
+      // console.log("[onNoMatch]", event);
     };
 
     const onError = (event) => {
-      console.log("[onError]", event);
+      console.error("[onError]", event);
     };
 
     if (!recognitionRef.current) {

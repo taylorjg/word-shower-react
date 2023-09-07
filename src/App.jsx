@@ -59,11 +59,11 @@ export const App = () => {
   const onWord = useCallback(
     (word) => {
       const lastWordAdded = lastWordAddedRef.current;
-      console.log("[onWord]", {
-        word,
-        lastWordAdded,
-        activeLetters: activeLetters.map(({ letter }) => letter).join(""),
-      });
+      // console.log("[onWord]", {
+      //   word,
+      //   lastWordAdded,
+      //   activeLetters: activeLetters.map(({ letter }) => letter).join(""),
+      // });
       if (word.length >= 4 && word !== lastWordAdded) {
         lastCandidateWordRef.current = word;
         if (checkWord(word, activeLetters, settings.strictMode)) {
@@ -72,11 +72,19 @@ export const App = () => {
           const wordScore = getScrabbleScore(word);
           setScore((currentScore) => currentScore + wordScore);
           if (settings.enableConfetti) {
-            confetti({
-              particleCount: 100,
-              spread: 70,
-              origin: { y: 0.6 },
-            });
+            if (wordScore >= 10) {
+              confetti({
+                particleCount: 100,
+                spread: 25,
+                shapes: ["star"],
+                colors: ["FFE400", "FFBD00", "E89400", "FFCA6C", "FDFFB8"],
+              });
+            } else {
+              confetti({
+                particleCount: 250,
+                spread: 25,
+              });
+            }
           }
         }
       }
