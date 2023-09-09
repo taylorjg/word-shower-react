@@ -130,6 +130,9 @@ const gameConfig = {
     height: "100%",
     mode: Phaser.Scale.NONE,
   },
+  render: {
+    pixelArt: true,
+  },
   parent: "shower-panel",
   transparent: true,
   canvasStyle: `
