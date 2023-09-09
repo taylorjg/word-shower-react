@@ -74,15 +74,23 @@ export const App = () => {
           if (settings.enableConfetti) {
             if (wordScore >= 10) {
               confetti({
-                particleCount: 100,
+                count: 100,
                 spread: 25,
                 shapes: ["star"],
                 colors: ["FFE400", "FFBD00", "E89400", "FFCA6C", "FDFFB8"],
+              }).then((container) => {
+                if (container) {
+                  container.fpsLimit = 60;
+                }
               });
             } else {
               confetti({
-                particleCount: 250,
+                count: 250,
                 spread: 25,
+              }).then((container) => {
+                if (container) {
+                  container.fpsLimit = 60;
+                }
               });
             }
           }
