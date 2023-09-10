@@ -1,5 +1,3 @@
-/* global confetti */
-
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import ReactSlidingPane from "react-sliding-pane";
@@ -7,6 +5,7 @@ import "react-sliding-pane/dist/react-sliding-pane.css";
 
 import { useActiveLetters } from "@app/hooks/use-active-letters";
 import { useAnalytics } from "@app/hooks/use-analytics";
+import { useConfetti, ConfettiType } from "@app/hooks/use-confetti";
 import { useSpeechRecognition } from "@app/hooks/use-speech-recognition";
 
 import { checkWord } from "@app/helpers/check-word";
@@ -29,9 +28,6 @@ import { GameState, DEFAULT_SETTINGS } from "@app/constants";
 
 import { StyledApp, StyledGrid } from "./App.styles";
 
-const CONFETTI_TYPE_0 = "confetti";
-const CONFETTI_TYPE_1 = "stars";
-
 export const App = () => {
   const [gameState, setGameState] = useState(GameState.Stopped);
   const [foundWords, setFoundWords] = useState([]);
@@ -43,7 +39,8 @@ export const App = () => {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const startTimeRef = useRef();
   const gameActionsRef = useRef();
-  const confettiTypeRef = useRef(CONFETTI_TYPE_0);
+  const confettiTypeRef = useRef(ConfettiType.Confetti);
+  const { playConfetti } = useConfetti();
 
   const onAddLetter = useCallback((letterWrapper) => {
     const { id, letter } = letterWrapper;
@@ -58,51 +55,12 @@ export const App = () => {
     stopActiveLetters,
   } = useActiveLetters(settings, onAddLetter);
 
-  useEffect(() => {
-    const onConfettiLoaded = (container) => {
-      if (container) {
-        container.fpsLimit = 60;
-      }
-    };
-
-    // pre-warm the confetti engine
-    confetti({ count: 0 }).then(onConfettiLoaded);
-  }, []);
-
-  const playConfetti = useCallback((confettiType) => {
-    const makeConfettiOptions = () => {
-      const commonConfettiOptions = {
-        count: 200,
-        startVelocity: 100,
-        origin: { y: 0.75 },
-      };
-
-      switch (confettiType) {
-        default:
-        case CONFETTI_TYPE_0:
-          return {
-            ...commonConfettiOptions,
-            scalar: 1.5,
-          };
-        case CONFETTI_TYPE_1:
-          return {
-            ...commonConfettiOptions,
-            shapes: ["star"],
-            colors: ["FFE400", "FFBD00", "E89400", "FFCA6C", "FDFFB8"],
-          };
-      }
-    };
-
-    const confettiOptions = makeConfettiOptions();
-    confetti(confettiOptions);
-  }, []);
-
   const onTap = useCallback(() => {
     playConfetti(confettiTypeRef.current);
     confettiTypeRef.current =
-      confettiTypeRef.current === CONFETTI_TYPE_0
-        ? CONFETTI_TYPE_1
-        : CONFETTI_TYPE_0;
+      confettiTypeRef.current === ConfettiType.Confetti
+        ? ConfettiType.Stars
+        : ConfettiType.Confetti;
   }, [playConfetti]);
 
   const isSmallDevice = useMediaQuery("only screen and (max-width: 600px)");
@@ -124,7 +82,7 @@ export const App = () => {
           setScore((currentScore) => currentScore + wordScore);
           if (settings.enableConfetti) {
             const confettiType =
-              wordScore >= 10 ? CONFETTI_TYPE_1 : CONFETTI_TYPE_0;
+              wordScore >= 10 ? ConfettiType.Stars : ConfettiType.Confetti;
             playConfetti(confettiType);
           }
         }
