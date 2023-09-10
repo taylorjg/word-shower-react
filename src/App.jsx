@@ -83,7 +83,7 @@ export const App = () => {
           if (settings.enableConfetti) {
             const confettiType =
               wordScore >= 10 ? ConfettiType.Stars : ConfettiType.Confetti;
-            playConfetti(confettiType);
+            setTimeout(playConfetti, 250, confettiType);
           }
         }
       }
