@@ -23,8 +23,6 @@ export const useConfetti = () => {
     const makeConfettiOptions = () => {
       const commonConfettiOptions = {
         count: 200,
-        startVelocity: 100,
-        origin: { y: 0.75 },
       };
 
       switch (confettiType) {

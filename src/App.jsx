@@ -39,7 +39,6 @@ export const App = () => {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const startTimeRef = useRef();
   const gameActionsRef = useRef();
-  const confettiTypeRef = useRef(ConfettiType.Confetti);
   const { playConfetti } = useConfetti();
 
   const onAddLetter = useCallback((letterWrapper) => {
@@ -54,14 +53,6 @@ export const App = () => {
     startActiveLetters,
     stopActiveLetters,
   } = useActiveLetters(settings, onAddLetter);
-
-  const onTap = useCallback(() => {
-    playConfetti(confettiTypeRef.current);
-    confettiTypeRef.current =
-      confettiTypeRef.current === ConfettiType.Confetti
-        ? ConfettiType.Stars
-        : ConfettiType.Confetti;
-  }, [playConfetti]);
 
   const isSmallDevice = useMediaQuery("only screen and (max-width: 600px)");
 
@@ -99,7 +90,7 @@ export const App = () => {
   const onStart = () => {
     if (!gameActionsRef.current) {
       const game = initGame(settings.letterFallSpeed);
-      gameActionsRef.current = makeGameActions(game, onLetterRemoved, onTap);
+      gameActionsRef.current = makeGameActions(game, onLetterRemoved);
     }
     reset();
     gameActionsRef.current.start(settings.letterFallSpeed);
