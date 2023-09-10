@@ -83,12 +83,13 @@ class ShowerScene extends Phaser.Scene {
 
     const canvasWidth = this.sys.game.canvas.width;
 
-    const SIZE = 50;
-    const MARGIN = 5;
+    const TILE_SIZE = 50;
+    const SINGLE_MARGIN = TILE_SIZE / 10;
+    const BOTH_MARGINS = SINGLE_MARGIN * 2;
 
     const letterTile = this.add.graphics();
     letterTile.fillStyle(0xffe4c4); // Bisque
-    letterTile.fillRoundedRect(0, 0, SIZE, SIZE, 10);
+    letterTile.fillRoundedRect(0, 0, TILE_SIZE, TILE_SIZE, 10);
 
     const letterTextStyle = {
       fontSize: "40px",
@@ -103,19 +104,24 @@ class ShowerScene extends Phaser.Scene {
     };
 
     const letterText = this.add
-      .text(SIZE * 0.5, SIZE * 0.5, letter.toUpperCase(), letterTextStyle)
+      .text(
+        TILE_SIZE * 0.5,
+        TILE_SIZE * 0.5,
+        letter.toUpperCase(),
+        letterTextStyle
+      )
       .setOrigin(0.5);
 
     const valueText = this.add
-      .text(SIZE * 0.85, SIZE * 0.8, value.toString(), valueTextStyle)
+      .text(TILE_SIZE * 0.85, TILE_SIZE * 0.8, value.toString(), valueTextStyle)
       .setOrigin(0.5);
 
-    const availableWidth = canvasWidth - 2 * MARGIN - SIZE;
-    const x = MARGIN + Math.floor(availableWidth * Math.random());
-    const y = this.cameras.main.scrollY - SIZE;
+    const availableWidth = canvasWidth - BOTH_MARGINS - TILE_SIZE;
+    const x = SINGLE_MARGIN + Math.floor(availableWidth * Math.random());
+    const y = this.cameras.main.scrollY - TILE_SIZE;
     const children = [letterTile, letterText, valueText];
     const letterTileContainer = this.add.container(x, y, children);
-    letterTileContainer.postFX.addShadow(0, 1, 0.05);
+    // letterTileContainer.postFX.addShadow(0, 1, 0.05);
     letterTileContainer.setData("id", id);
     this.letterTileContainers.push(letterTileContainer);
   }
@@ -129,9 +135,6 @@ const gameConfig = {
     width: "100%",
     height: "100%",
     mode: Phaser.Scale.NONE,
-  },
-  render: {
-    pixelArt: true,
   },
   parent: "shower-panel",
   transparent: true,
