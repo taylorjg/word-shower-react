@@ -29,6 +29,9 @@ import { GameState, DEFAULT_SETTINGS } from "@app/constants";
 
 import { StyledApp, StyledGrid } from "./App.styles";
 
+const CONFETTI_TYPE_0 = "confetti";
+const CONFETTI_TYPE_1 = "stars";
+
 export const App = () => {
   const [gameState, setGameState] = useState(GameState.Stopped);
   const [foundWords, setFoundWords] = useState([]);
@@ -40,6 +43,7 @@ export const App = () => {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const startTimeRef = useRef();
   const gameActionsRef = useRef();
+  const confettiTypeRef = useRef(CONFETTI_TYPE_0);
 
   const onAddLetter = useCallback((letterWrapper) => {
     const { id, letter } = letterWrapper;
@@ -53,6 +57,53 @@ export const App = () => {
     startActiveLetters,
     stopActiveLetters,
   } = useActiveLetters(settings, onAddLetter);
+
+  useEffect(() => {
+    const onConfettiLoaded = (container) => {
+      if (container) {
+        container.fpsLimit = 60;
+      }
+    };
+
+    // pre-warm the confetti engine
+    confetti({ count: 0 }).then(onConfettiLoaded);
+  }, []);
+
+  const playConfetti = useCallback((confettiType) => {
+    const makeConfettiOptions = () => {
+      const commonConfettiOptions = {
+        count: 200,
+        startVelocity: 100,
+        origin: { y: 0.75 },
+      };
+
+      switch (confettiType) {
+        default:
+        case CONFETTI_TYPE_0:
+          return {
+            ...commonConfettiOptions,
+            scalar: 1.5,
+          };
+        case CONFETTI_TYPE_1:
+          return {
+            ...commonConfettiOptions,
+            shapes: ["star"],
+            colors: ["FFE400", "FFBD00", "E89400", "FFCA6C", "FDFFB8"],
+          };
+      }
+    };
+
+    const confettiOptions = makeConfettiOptions();
+    confetti(confettiOptions);
+  }, []);
+
+  const onTap = useCallback(() => {
+    playConfetti(confettiTypeRef.current);
+    confettiTypeRef.current =
+      confettiTypeRef.current === CONFETTI_TYPE_0
+        ? CONFETTI_TYPE_1
+        : CONFETTI_TYPE_0;
+  }, [playConfetti]);
 
   const isSmallDevice = useMediaQuery("only screen and (max-width: 600px)");
 
@@ -71,38 +122,15 @@ export const App = () => {
           lastWordAddedRef.current = word;
           const wordScore = getScrabbleScore(word);
           setScore((currentScore) => currentScore + wordScore);
-          const onConfettiDone = (container) => {
-            if (container) {
-              container.fpsLimit = 60;
-            }
-          };
           if (settings.enableConfetti) {
-            const myDefaults = {
-              // spread: 25,
-              startVelocity: 80,
-            };
-            if (wordScore >= 10) {
-              confetti({
-                ...myDefaults,
-                count: 100,
-                // spread: 25,
-                // startVelocity: 80,
-                shapes: ["star"],
-                colors: ["FFE400", "FFBD00", "E89400", "FFCA6C", "FDFFB8"],
-              }).then(onConfettiDone);
-            } else {
-              confetti({
-                ...myDefaults,
-                count: 250,
-                // spread: 25,
-                // startVelocity: 80,
-              }).then(onConfettiDone);
-            }
+            const confettiType =
+              wordScore >= 10 ? CONFETTI_TYPE_1 : CONFETTI_TYPE_0;
+            playConfetti(confettiType);
           }
         }
       }
     },
-    [activeLetters, settings]
+    [activeLetters, settings, playConfetti]
   );
 
   const { start: startSpeechRecognition, stop: stopSpeechRecognition } =
@@ -113,7 +141,7 @@ export const App = () => {
   const onStart = () => {
     if (!gameActionsRef.current) {
       const game = initGame(settings.letterFallSpeed);
-      gameActionsRef.current = makeGameActions(game, onLetterRemoved);
+      gameActionsRef.current = makeGameActions(game, onLetterRemoved, onTap);
     }
     reset();
     gameActionsRef.current.start(settings.letterFallSpeed);

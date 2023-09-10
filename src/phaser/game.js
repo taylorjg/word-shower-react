@@ -1,7 +1,8 @@
 import * as Phaser from "phaser";
 
-export const makeGameActions = (game, onLetterRemoved) => {
+export const makeGameActions = (game, onLetterRemoved, onTap = () => {}) => {
   game.events.on("LETTER_REMOVED", onLetterRemoved);
+  game.events.on("TAP", onTap);
 
   return {
     start: (letterFallSpeed) => {
@@ -35,6 +36,9 @@ class ShowerScene extends Phaser.Scene {
     this.game.events.on(
       "SET_LETTER_FALL_SPEED",
       this.onSetLetterFallSpeed.bind(this)
+    );
+    this.input.on(Phaser.Input.Events.POINTER_DOWN, () =>
+      this.game.events.emit("TAP")
     );
   }
 
