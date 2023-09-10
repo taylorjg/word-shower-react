@@ -1,7 +1,7 @@
 {
   "name": "word-shower-react",
   "private": true,
-  "version": "0.0.24-phaser-22",
+  "version": "0.0.24-phaser-23",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -3,8 +3,8 @@
 import { useEffect, useCallback } from "react";
 
 export const ConfettiType = Object.freeze({
-  Confetti: "confetti",
-  Stars: "stars",
+  Confetti: "Confetti",
+  Stars: "Stars",
 });
 
 export const useConfetti = () => {
