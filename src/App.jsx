@@ -22,7 +22,7 @@ import {
   Shower,
 } from "@app/components";
 
-import { initGame, makeGameActions } from "@app/phaser";
+import { initGame } from "@app/phaser";
 
 import { GameState, DEFAULT_SETTINGS } from "@app/constants";
 
@@ -89,8 +89,7 @@ export const App = () => {
 
   const onStart = () => {
     if (!gameActionsRef.current) {
-      const game = initGame(settings.letterFallSpeed);
-      gameActionsRef.current = makeGameActions(game, onLetterRemoved);
+      gameActionsRef.current = initGame(settings, onLetterRemoved);
     }
     reset();
     gameActionsRef.current.start(settings.letterFallSpeed);

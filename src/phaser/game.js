@@ -1,21 +1,5 @@
 import * as Phaser from "phaser";
 
-export const makeGameActions = (game, onLetterRemoved) => {
-  game.events.on("LETTER_REMOVED", onLetterRemoved);
-
-  return {
-    start: (letterFallSpeed) => {
-      game.events.emit("START", letterFallSpeed);
-    },
-    addLetter: (id, letter, value) => {
-      game.events.emit("ADD_LETTER", id, letter, value);
-    },
-    setLetterFallSpeed: (letterFallSpeed) => {
-      game.events.emit("SET_LETTER_FALL_SPEED", letterFallSpeed);
-    },
-  };
-};
-
 class ShowerScene extends Phaser.Scene {
   constructor() {
     // console.log("[ShowerScene#constructor]");
@@ -147,9 +131,25 @@ const gameConfig = {
   `,
 };
 
-export const initGame = (letterFallSpeed) => {
+export const initGame = (settings, onLetterRemoved) => {
   const game = new Phaser.Game(gameConfig);
+
   const showerScene = new ShowerScene();
-  game.scene.add("ShowerScene", showerScene, true, { letterFallSpeed });
-  return game;
+  const autoStart = true;
+  const data = { letterFallSpeed: settings.letterFallSpeed };
+  game.scene.add("ShowerScene", showerScene, autoStart, data);
+
+  game.events.on("LETTER_REMOVED", onLetterRemoved);
+
+  return {
+    start: (letterFallSpeed) => {
+      game.events.emit("START", letterFallSpeed);
+    },
+    addLetter: (id, letter, value) => {
+      game.events.emit("ADD_LETTER", id, letter, value);
+    },
+    setLetterFallSpeed: (letterFallSpeed) => {
+      game.events.emit("SET_LETTER_FALL_SPEED", letterFallSpeed);
+    },
+  };
 };
