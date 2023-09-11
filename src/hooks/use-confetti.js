@@ -1,6 +1,5 @@
-/* global confetti */
-
 import { useEffect, useCallback } from "react";
+import { confetti } from "tsparticles-confetti";
 
 export const ConfettiType = Object.freeze({
   Confetti: "Confetti",
