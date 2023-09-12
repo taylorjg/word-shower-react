@@ -1,19 +1,20 @@
 import * as Phaser from "phaser";
+import log from "loglevel";
 
 class ShowerScene extends Phaser.Scene {
   constructor() {
-    // console.log("[ShowerScene#constructor]");
+    log.debug("[ShowerScene#constructor]");
     super("ShowerScene");
     this.letterTileContainers = [];
   }
 
   init(data) {
-    // console.log("[ShowerScene#init]", data);
+    log.debug("[ShowerScene#init]", data);
     this.letterFallSpeed = data.letterFallSpeed;
   }
 
   create() {
-    // console.log("[ShowerScene#create]");
+    log.debug("[ShowerScene#create]");
     this.game.events.on("START", this.onStart.bind(this));
     this.game.events.on("ADD_LETTER", this.onAddLetter.bind(this));
     this.game.events.on(
@@ -22,7 +23,7 @@ class ShowerScene extends Phaser.Scene {
     );
   }
 
-  update(time, delta) {
+  update(_time, delta) {
     if (this.letterTileContainers.length > 0) {
       const canvasHeight = this.sys.game.canvas.height;
       const top = this.cameras.main.scrollY;
@@ -48,22 +49,18 @@ class ShowerScene extends Phaser.Scene {
   }
 
   onStart(letterFallSpeed) {
-    // console.log("[ShowerScene#onStart]", { letterFallSpeed });
+    log.debug("[ShowerScene#onStart]", { letterFallSpeed });
     this.cameras.main.scrollY = 0;
     this.letterFallSpeed = letterFallSpeed;
   }
 
   onSetLetterFallSpeed(letterFallSpeed) {
-    // console.log("[ShowerScene#onSetLetterFallSpeed]", { letterFallSpeed });
+    log.debug("[ShowerScene#onSetLetterFallSpeed]", { letterFallSpeed });
     this.letterFallSpeed = letterFallSpeed;
   }
 
   onAddLetter(id, letter, value) {
-    // console.log("[ShowerScene#onAddLetter]", {
-    //   id,
-    //   letter,
-    //   value,
-    // });
+    log.debug("[ShowerScene#onAddLetter]", { id, letter, value });
 
     const canvasWidth = this.sys.game.canvas.width;
 
@@ -145,9 +142,11 @@ export const initGame = (settings, onLetterRemoved) => {
     start: (letterFallSpeed) => {
       game.events.emit("START", letterFallSpeed);
     },
+
     addLetter: (id, letter, value) => {
       game.events.emit("ADD_LETTER", id, letter, value);
     },
+
     setLetterFallSpeed: (letterFallSpeed) => {
       game.events.emit("SET_LETTER_FALL_SPEED", letterFallSpeed);
     },

@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react";
+import log from "loglevel";
 
 import { getRandomLetter } from "@app/helpers/scrabble";
 
@@ -29,7 +30,7 @@ export const useActiveLetters = (settings, onAddLetter) => {
 
   const onLetterRemoved = useCallback((id) => {
     const removeLetter = (id) => {
-      // console.log("[removeLetter]", { id });
+      log.debug("[removeLetter]", { id });
       setActiveLetters((currentActiveLetters) =>
         currentActiveLetters.filter((item) => item.id !== id)
       );

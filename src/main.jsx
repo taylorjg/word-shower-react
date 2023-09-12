@@ -1,9 +1,12 @@
 // import React from "react";
 import ReactDOM from "react-dom/client";
 import { ThemeProvider } from "styled-components";
+import log from "loglevel";
 
 import { App } from "./App.jsx";
 import { GlobalStyles, theme } from "./components/Global.styles.js";
+
+window.log = log;
 
 const root = document.getElementById("root");
 

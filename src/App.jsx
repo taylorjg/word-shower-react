@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import ReactSlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
+import log from "loglevel";
 
 import { useActiveLetters } from "@app/hooks/use-active-letters";
 import { useAnalytics } from "@app/hooks/use-analytics";
@@ -59,17 +60,18 @@ export const App = () => {
   const onWord = useCallback(
     (word) => {
       const lastWordAdded = lastWordAddedRef.current;
-      // console.log("[onWord]", {
-      //   word,
-      //   lastWordAdded,
-      //   activeLetters: activeLetters.map(({ letter }) => letter).join(""),
-      // });
+      log.debug("[onWord]", {
+        word,
+        lastWordAdded,
+        activeLetters: activeLetters.map(({ letter }) => letter).join(""),
+      });
       if (word.length >= 4 && word !== lastWordAdded) {
         lastCandidateWordRef.current = word;
         if (checkWord(word, activeLetters, settings.strictMode)) {
           setFoundWords((currentFoundWords) => [word, ...currentFoundWords]);
           lastWordAddedRef.current = word;
           const wordScore = getScrabbleScore(word);
+          log.debug("[onWord]", { word, wordScore });
           setScore((currentScore) => currentScore + wordScore);
           if (settings.enableConfetti) {
             const confettiType =

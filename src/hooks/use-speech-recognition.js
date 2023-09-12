@@ -1,4 +1,5 @@
 import { useCallback, useRef } from "react";
+import log from "loglevel";
 
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -9,19 +10,19 @@ export const useSpeechRecognition = (onWord) => {
   const onWordRef = useRef();
 
   const start = useCallback(() => {
-    const onStart = (/* event */) => {
-      // console.log("[onStart]", event);
+    const onStart = (event) => {
+      log.debug("[onStart]", event);
     };
 
-    const onEnd = (/* event */) => {
-      // console.log("[onEnd]", event);
+    const onEnd = (event) => {
+      log.debug("[onEnd]", event);
       if (recognitionRef.current && runningRef.current) {
         recognitionRef.current.start();
       }
     };
 
     const onResult = (event) => {
-      // console.log("[onResult]", event);
+      log.debug("[onResult]", event);
       const result = event.results[event.resultIndex][0];
       const words = result.transcript
         .trim()
@@ -34,12 +35,12 @@ export const useSpeechRecognition = (onWord) => {
       }
     };
 
-    const onNoMatch = (/* event */) => {
-      // console.log("[onNoMatch]", event);
+    const onNoMatch = (event) => {
+      log.debug("[onNoMatch]", event);
     };
 
     const onError = (event) => {
-      console.error("[onError]", event);
+      log.error("[onError]", event);
     };
 
     if (!recognitionRef.current) {
