@@ -126,6 +126,7 @@ export const App = () => {
     if (gameState === GameState.Stopping) {
       if (activeLetters.length === 0) {
         setGameState(GameState.Stopped);
+        gameActionsRef.current.stop();
       }
     }
   }, [gameState, activeLetters]);
