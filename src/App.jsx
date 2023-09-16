@@ -94,7 +94,7 @@ export const App = () => {
       gameActionsRef.current = initGame(settings, onLetterRemoved);
     }
     reset();
-    gameActionsRef.current.start(settings.letterFallSpeed);
+    gameActionsRef.current.start(settings);
     setGameState(GameState.Running);
     startSpeechRecognition();
     startActiveLetters();
@@ -131,9 +131,11 @@ export const App = () => {
   }, [gameState, activeLetters]);
 
   useEffect(() => {
-    if (gameActionsRef.current) {
-      gameActionsRef.current.setLetterFallSpeed(settings.letterFallSpeed);
-    }
+    gameActionsRef.current?.setNewLetterRate(settings.newLetterRate);
+  }, [settings.newLetterRate]);
+
+  useEffect(() => {
+    gameActionsRef.current?.setLetterFallSpeed(settings.letterFallSpeed);
   }, [settings.letterFallSpeed]);
 
   const reset = () => {

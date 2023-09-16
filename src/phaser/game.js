@@ -5,22 +5,24 @@ class ShowerScene extends Phaser.Scene {
   constructor() {
     log.debug("[ShowerScene#constructor]");
     super("ShowerScene");
+    this.newLetterRate = 0;
+    this.letterFallSpeed = 0;
     this.letterTileContainers = [];
   }
 
-  init(data) {
-    log.debug("[ShowerScene#init]", data);
-    this.letterFallSpeed = data.letterFallSpeed;
+  init(settings) {
+    log.debug("[ShowerScene#init]", { settings });
+    this.newLetterRate = settings.newLetterRate;
+    this.letterFallSpeed = settings.letterFallSpeed;
   }
 
   create() {
     log.debug("[ShowerScene#create]");
-    this.game.events.on("START", this.onStart.bind(this));
-    this.game.events.on("ADD_LETTER", this.onAddLetter.bind(this));
-    this.game.events.on(
-      "SET_LETTER_FALL_SPEED",
-      this.onSetLetterFallSpeed.bind(this)
-    );
+    const events = this.game.events;
+    events.on("START", this.onStart.bind(this));
+    events.on("ADD_LETTER", this.onAddLetter.bind(this));
+    events.on("SET_NEW_LETTER_RATE", this.onSetNewLetterRate.bind(this));
+    events.on("SET_LETTER_FALL_SPEED", this.onSetLetterFallSpeed.bind(this));
   }
 
   update(_time, delta) {
@@ -48,10 +50,20 @@ class ShowerScene extends Phaser.Scene {
     this.cameras.main.scrollY -= fallDelta;
   }
 
-  onStart(letterFallSpeed) {
-    log.debug("[ShowerScene#onStart]", { letterFallSpeed });
+  onStart(settings) {
+    log.debug("[ShowerScene#onStart]");
+    this.newLetterRate = settings.newLetterRate;
+    this.letterFallSpeed = settings.letterFallSpeed;
     this.cameras.main.scrollY = 0;
-    this.letterFallSpeed = letterFallSpeed;
+  }
+
+  onStop() {
+    log.debug("[ShowerScene#onStop]");
+  }
+
+  onSetNewLetterRate(newLetterRate) {
+    log.debug("[ShowerScene#onSetNewLetterRate]", { newLetterRate });
+    this.newLetterRate = newLetterRate;
   }
 
   onSetLetterFallSpeed(letterFallSpeed) {
@@ -102,7 +114,6 @@ class ShowerScene extends Phaser.Scene {
     const y = this.cameras.main.scrollY - TILE_SIZE;
     const children = [letterTile, letterText, valueText];
     const letterTileContainer = this.add.container(x, y, children);
-    // letterTileContainer.postFX.addShadow(0, 1, 0.05);
     letterTileContainer.setData("id", id);
     this.letterTileContainers.push(letterTileContainer);
   }
@@ -131,20 +142,28 @@ const gameConfig = {
 export const initGame = (settings, onLetterRemoved) => {
   const game = new Phaser.Game(gameConfig);
 
-  const showerScene = new ShowerScene();
-  const autoStart = true;
-  const data = { letterFallSpeed: settings.letterFallSpeed };
-  game.scene.add("ShowerScene", showerScene, autoStart, data);
-
   game.events.on("LETTER_REMOVED", onLetterRemoved);
 
+  const showerScene = new ShowerScene();
+  const autoStart = true;
+  const data = settings;
+  game.scene.add("ShowerScene", showerScene, autoStart, data);
+
   return {
-    start: (letterFallSpeed) => {
-      game.events.emit("START", letterFallSpeed);
+    start: (settings) => {
+      game.events.emit("START", settings);
+    },
+
+    stop: () => {
+      game.events.emit("STOP");
     },
 
     addLetter: (id, letter, value) => {
       game.events.emit("ADD_LETTER", id, letter, value);
+    },
+
+    setNewLetterRate: (newLetterRate) => {
+      game.events.emit("SET_NEW_LETTER_RATE", newLetterRate);
     },
 
     setLetterFallSpeed: (letterFallSpeed) => {
