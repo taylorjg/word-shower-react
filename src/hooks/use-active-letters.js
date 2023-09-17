@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import log from "loglevel";
 
 import { getRandomLetter } from "@app/helpers/scrabble";
@@ -11,9 +11,6 @@ export const useActiveLetters = (settings, onAddLetter) => {
   const pausedRef = useRef(false);
   const intervalIdRef = useRef(false);
   const nextIdRef = useRef(0);
-
-  const onAddLetterRef = useRef();
-  onAddLetterRef.current = onAddLetter;
 
   const getNextId = () => {
     return nextIdRef.current++;
@@ -59,21 +56,29 @@ export const useActiveLetters = (settings, onAddLetter) => {
           id: getNextId(),
           letter: getRandomLetter(),
         };
-        onAddLetterRef.current?.(newLetterWrapper);
+        onAddLetter(newLetterWrapper);
         return [...currentActiveLetters, newLetterWrapper];
       });
     }
-  }, []);
+  }, [onAddLetter]);
 
-  const intervalCallbackRef = useRef();
-  intervalCallbackRef.current = intervalCallback;
+  useEffect(() => {
+    if (intervalIdRef.current) {
+      clearInterval(intervalIdRef.current);
+      intervalIdRef.current = setInterval(
+        intervalCallback,
+        settings.newLetterRate
+      );
+    }
+  }, [intervalCallback, settings.newLetterRate]);
 
   const start = useCallback(() => {
     reset();
-    intervalIdRef.current = setInterval(() => {
-      intervalCallbackRef.current();
-    }, settings.newLetterRate);
-  }, [settings]);
+    intervalIdRef.current = setInterval(
+      intervalCallback,
+      settings.newLetterRate
+    );
+  }, [intervalCallback, settings.newLetterRate]);
 
   const stop = useCallback(() => {
     if (intervalIdRef.current) {
