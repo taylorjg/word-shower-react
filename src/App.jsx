@@ -42,21 +42,6 @@ export const App = () => {
   const gameActionsRef = useRef();
   const { playConfetti } = useConfetti();
 
-  useEffect(() => {
-    if (gameState === GameState.Running) {
-      if (isInstructionsPaneOpen || isSettingsPaneOpen) {
-        setGameState(GameState.Paused);
-        gameActionsRef.current?.pause();
-      }
-    }
-    if (gameState === GameState.Paused) {
-      if (!isInstructionsPaneOpen && !isSettingsPaneOpen) {
-        setGameState(GameState.Running);
-        gameActionsRef.current?.resume(settings);
-      }
-    }
-  }, [isInstructionsPaneOpen, isSettingsPaneOpen, gameState, settings]);
-
   const onAddLetter = useCallback((letterWrapper) => {
     const { id, letter } = letterWrapper;
     const value = lookupLetterValue(letter);
@@ -68,7 +53,33 @@ export const App = () => {
     onLetterRemoved,
     startActiveLetters,
     stopActiveLetters,
-  } = useActiveLetters(settings, onAddLetter, gameState === GameState.Paused);
+    pauseActiveLetters,
+    resumeActiveLetters,
+  } = useActiveLetters(settings, onAddLetter);
+
+  useEffect(() => {
+    if (gameState === GameState.Running) {
+      if (isInstructionsPaneOpen || isSettingsPaneOpen) {
+        setGameState(GameState.Paused);
+        gameActionsRef.current?.pause();
+        pauseActiveLetters();
+      }
+    }
+    if (gameState === GameState.Paused) {
+      if (!isInstructionsPaneOpen && !isSettingsPaneOpen) {
+        setGameState(GameState.Running);
+        gameActionsRef.current?.resume(settings);
+        resumeActiveLetters();
+      }
+    }
+  }, [
+    isInstructionsPaneOpen,
+    isSettingsPaneOpen,
+    gameState,
+    settings,
+    pauseActiveLetters,
+    resumeActiveLetters,
+  ]);
 
   const isSmallDevice = useMediaQuery("only screen and (max-width: 600px)");
 

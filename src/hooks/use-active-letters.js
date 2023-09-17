@@ -5,13 +5,14 @@ import { getRandomLetter } from "@app/helpers/scrabble";
 
 const SPEECH_RECOGNITION_DELAY = 2000;
 
-export const useActiveLetters = (settings, onAddLetter, isPaused) => {
+export const useActiveLetters = (settings, onAddLetter) => {
   const [activeLetters, setActiveLetters] = useState([]);
   const stopPendingRef = useRef(false);
+  const pausedRef = useRef(false);
   const intervalIdRef = useRef(false);
   const nextIdRef = useRef(0);
-  const onAddLetterRef = useRef();
 
+  const onAddLetterRef = useRef();
   onAddLetterRef.current = onAddLetter;
 
   const getNextId = () => {
@@ -26,6 +27,7 @@ export const useActiveLetters = (settings, onAddLetter, isPaused) => {
 
     setActiveLetters([]);
     stopPendingRef.current = false;
+    pausedRef.current = false;
   };
 
   const onLetterRemoved = useCallback((id) => {
@@ -33,7 +35,7 @@ export const useActiveLetters = (settings, onAddLetter, isPaused) => {
       log.debug("[onLetterRemoved]", { id });
       setActiveLetters((currentActiveLetters) => {
         const ids = currentActiveLetters.map(({ id }) => id).join(",");
-        log.debug("[onLetterRemoved]", { ids, activeLetters });
+        log.debug("[onLetterRemoved]", { ids });
         return currentActiveLetters.filter((item) => item.id !== id);
       });
     };
@@ -51,7 +53,7 @@ export const useActiveLetters = (settings, onAddLetter, isPaused) => {
   }, []);
 
   const intervalCallback = useCallback(() => {
-    if (!stopPendingRef.current && !isPaused) {
+    if (!stopPendingRef.current && !pausedRef.current) {
       setActiveLetters((currentActiveLetters) => {
         const newLetterWrapper = {
           id: getNextId(),
@@ -61,7 +63,7 @@ export const useActiveLetters = (settings, onAddLetter, isPaused) => {
         return [...currentActiveLetters, newLetterWrapper];
       });
     }
-  }, [isPaused]);
+  }, []);
 
   const intervalCallbackRef = useRef();
   intervalCallbackRef.current = intervalCallback;
@@ -79,10 +81,20 @@ export const useActiveLetters = (settings, onAddLetter, isPaused) => {
     }
   }, []);
 
+  const pause = useCallback(() => {
+    pausedRef.current = true;
+  }, []);
+
+  const resume = useCallback(() => {
+    pausedRef.current = false;
+  }, []);
+
   return {
     activeLetters,
     onLetterRemoved,
     startActiveLetters: start,
     stopActiveLetters: stop,
+    pauseActiveLetters: pause,
+    resumeActiveLetters: resume,
   };
 };
