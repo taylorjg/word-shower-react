@@ -9,6 +9,7 @@ export const GlobalStyles = createGlobalStyle`
     width: 100%;
     height: 100%;
     font-family: Arial, Helvetica, sans-serif;
+    background-color: bisque
   }
 `;
 
@@ -20,8 +21,8 @@ export const theme = {
   fontSize5: "xx-large",
   outerBorderRadius: "0.5rem",
   innerBorderRadius: "0.25rem",
-  border: "0.15rem solid black",
-  colour: "black",
-  backgroundColour: "white",
+  border: "0.15rem solid transparent",
+  colour: "bisque",
+  backgroundColour: "chocolate",
   padding: "0.5rem",
 };
