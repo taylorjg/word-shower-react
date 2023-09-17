@@ -21,9 +21,13 @@ class ShowerScene extends Phaser.Scene {
 
     const onPauseHandler = this.onPause.bind(this);
     const onResumeHandler = this.onResume.bind(this);
+    const onSleepHandler = this.onSleep.bind(this);
+    const onWakeHandler = this.onWake.bind(this);
 
     this.events.on(Phaser.Scenes.Events.PAUSE, onPauseHandler);
     this.events.on(Phaser.Scenes.Events.RESUME, onResumeHandler);
+    this.events.on(Phaser.Scenes.Events.SLEEP, onSleepHandler);
+    this.events.on(Phaser.Scenes.Events.WAKE, onWakeHandler);
 
     const onSetNewLetterRateHandler = this.onSetNewLetterRate.bind(this);
     const onSetLetterFallSpeedHandler = this.onSetLetterFallSpeed.bind(this);
@@ -65,6 +69,16 @@ class ShowerScene extends Phaser.Scene {
 
   onResume(_, settings) {
     log.debug("[ShowerScene#onResume]", { settings });
+    this.newLetterRate = settings.newLetterRate;
+    this.letterFallSpeed = settings.letterFallSpeed;
+  }
+
+  onSleep() {
+    log.debug("[ShowerScene#onSleep]");
+  }
+
+  onWake(_, settings) {
+    log.debug("[ShowerScene#onWake]", { settings });
     this.newLetterRate = settings.newLetterRate;
     this.letterFallSpeed = settings.letterFallSpeed;
     this.cameras.main.scrollY = 0;
@@ -158,11 +172,19 @@ export const initGame = (settings, onLetterRemoved) => {
 
   return {
     start: (settings) => {
-      game.scene.resume(showerScene, settings);
+      game.scene.wake(showerScene, settings);
     },
 
     stop: () => {
+      game.scene.sleep(showerScene);
+    },
+
+    pause: () => {
       game.scene.pause(showerScene);
+    },
+
+    resume: (settings) => {
+      game.scene.resume(showerScene, settings);
     },
 
     setNewLetterRate: (newLetterRate) => {

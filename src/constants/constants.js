@@ -1,6 +1,7 @@
 export const GameState = Object.freeze({
   Stopped: "Stopped",
   Running: "Running",
+  Paused: "Paused",
   Stopping: "Stopping",
 });
 

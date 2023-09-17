@@ -7,7 +7,7 @@ import { StyledButtons, StyledStopping } from "./Buttons.styles";
 export const Buttons = ({ gameState, onStart, onStop }) => {
   return (
     <StyledButtons>
-      {gameState === GameState.Running && (
+      {(gameState === GameState.Running || gameState === GameState.Paused) && (
         <button onClick={onStop}>Stop</button>
       )}
       {gameState === GameState.Stopped && (
