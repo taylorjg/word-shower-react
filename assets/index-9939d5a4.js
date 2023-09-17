@@ -7285,8 +7285,9 @@ return new `+this.key+`();
     width: 100%;
     height: 100%;
     font-family: Arial, Helvetica, sans-serif;
+    background-color: bisque
   }
-`,l6={fontSize1:"small",fontSize2:"medium",fontSize3:"large",fontSize4:"x-large",fontSize5:"xx-large",outerBorderRadius:"0.5rem",innerBorderRadius:"0.25rem",border:"0.15rem solid black",colour:"black",backgroundColour:"white",padding:"0.5rem"};window.log=ae;const h6=document.getElementById("root");Eh.createRoot(h6).render(nt.jsxs(nt.Fragment,{children:[nt.jsx(o6,{}),nt.jsx(o2,{theme:l6,children:nt.jsx(a6,{})})]}));if(window.location.hostname==="taylorjg.github.io"){const l=document.createElement("script");l.async=!0,l.src="https://www.googletagmanager.com/gtag/js?id=G-LLWBCGS18Y",document.head.appendChild(l);const i=document.createElement("script");i.innerHTML=`
+`,l6={fontSize1:"small",fontSize2:"medium",fontSize3:"large",fontSize4:"x-large",fontSize5:"xx-large",outerBorderRadius:"0.5rem",innerBorderRadius:"0.25rem",border:"0.15rem solid transparent",colour:"bisque",backgroundColour:"chocolate",padding:"0.5rem"};window.log=ae;const h6=document.getElementById("root");Eh.createRoot(h6).render(nt.jsxs(nt.Fragment,{children:[nt.jsx(o6,{}),nt.jsx(o2,{theme:l6,children:nt.jsx(a6,{})})]}));if(window.location.hostname==="taylorjg.github.io"){const l=document.createElement("script");l.async=!0,l.src="https://www.googletagmanager.com/gtag/js?id=G-LLWBCGS18Y",document.head.appendChild(l);const i=document.createElement("script");i.innerHTML=`
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
