@@ -41,6 +41,8 @@ My version makes the following changes:
   * [x] Strict Mode - in this mode, for the word `KISS` to be valid, there would have to be two instances of the letter `S` in the list of active letters
 * [ ] Improve the UI on smaller screens
 * [x] Improve the UI on larger screens
+* [x] Use Phaser to implement the scrolling letter tiles
+* [x] Add a burst of confetti when a word is found
 
 # Links
 
