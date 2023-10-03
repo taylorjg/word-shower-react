@@ -2,7 +2,7 @@
   "name": "word-shower-react",
   "description": "A zen little game where you stare at your screen and come up with words from a transient stream of letters",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
