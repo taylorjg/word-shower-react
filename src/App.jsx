@@ -213,7 +213,7 @@ export const App = () => {
         />
         <Shower />
         <FoundWords foundWords={foundWords} />
-        <Score score={score} />
+        <Score score={score} foundWords={foundWords} />
         <Buttons gameState={gameState} onStart={onStart} onStop={onStop} />
       </StyledGrid>
 
