@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "@uidotdev/usehooks";
-import ReactSlidingPane from "react-sliding-pane";
+import { ReactSlidingPane } from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import log from "loglevel";
 
