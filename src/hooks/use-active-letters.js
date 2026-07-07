@@ -5,12 +5,21 @@ import { getRandomLetter } from "@app/helpers/scrabble";
 
 const SPEECH_RECOGNITION_DELAY = 2000;
 
-export const useActiveLetters = (settings, onAddLetter) => {
+export const useActiveLetters = (
+  settings,
+  onAddLetter,
+  onActiveLettersEmpty
+) => {
   const [activeLetters, setActiveLetters] = useState([]);
   const stopPendingRef = useRef(false);
   const pausedRef = useRef(false);
   const intervalIdRef = useRef(false);
   const nextIdRef = useRef(0);
+  const onActiveLettersEmptyRef = useRef(onActiveLettersEmpty);
+
+  useEffect(() => {
+    onActiveLettersEmptyRef.current = onActiveLettersEmpty;
+  }, [onActiveLettersEmpty]);
 
   const getNextId = () => {
     return nextIdRef.current++;
@@ -33,7 +42,13 @@ export const useActiveLetters = (settings, onAddLetter) => {
       setActiveLetters((currentActiveLetters) => {
         const ids = currentActiveLetters.map(({ id }) => id).join(",");
         log.debug("[onLetterRemoved]", { ids });
-        return currentActiveLetters.filter((item) => item.id !== id);
+        const nextActiveLetters = currentActiveLetters.filter(
+          (item) => item.id !== id
+        );
+        if (nextActiveLetters.length === 0 && currentActiveLetters.length > 0) {
+          onActiveLettersEmptyRef.current?.();
+        }
+        return nextActiveLetters;
       });
     };
 

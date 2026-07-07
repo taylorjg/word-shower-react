@@ -35,7 +35,7 @@ export const App = () => {
   const [score, setScore] = useState(0);
   const [isInstructionsPaneOpen, setIsInstructionsPaneOpen] = useState(false);
   const [isSettingsPaneOpen, setIsSettingsPaneOpen] = useState(false);
-  const lastCandidateWordRef = useRef();
+  const [listeningDisplay, setListeningDisplay] = useState(null);
   const lastWordAddedRef = useRef();
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const startTimeRef = useRef();
@@ -48,6 +48,16 @@ export const App = () => {
     gameActionsRef.current?.addLetter(id, letter, value);
   }, []);
 
+  const onActiveLettersEmpty = useCallback(() => {
+    setGameState((currentGameState) => {
+      if (currentGameState === GameState.Stopping) {
+        gameActionsRef.current?.stop();
+        return GameState.Stopped;
+      }
+      return currentGameState;
+    });
+  }, []);
+
   const {
     activeLetters,
     onLetterRemoved,
@@ -55,31 +65,29 @@ export const App = () => {
     stopActiveLetters,
     pauseActiveLetters,
     resumeActiveLetters,
-  } = useActiveLetters(settings, onAddLetter);
+  } = useActiveLetters(settings, onAddLetter, onActiveLettersEmpty);
 
-  useEffect(() => {
-    if (gameState === GameState.Running) {
-      if (isInstructionsPaneOpen || isSettingsPaneOpen) {
-        setGameState(GameState.Paused);
+  const pauseGameIfRunning = useCallback(() => {
+    setGameState((currentGameState) => {
+      if (currentGameState === GameState.Running) {
         gameActionsRef.current?.pause();
         pauseActiveLetters();
+        return GameState.Paused;
       }
-    }
-    if (gameState === GameState.Paused) {
-      if (!isInstructionsPaneOpen && !isSettingsPaneOpen) {
-        setGameState(GameState.Running);
+      return currentGameState;
+    });
+  }, [pauseActiveLetters]);
+
+  const resumeGameIfPaused = useCallback(() => {
+    setGameState((currentGameState) => {
+      if (currentGameState === GameState.Paused) {
         gameActionsRef.current?.resume(settings);
         resumeActiveLetters();
+        return GameState.Running;
       }
-    }
-  }, [
-    isInstructionsPaneOpen,
-    isSettingsPaneOpen,
-    gameState,
-    settings,
-    pauseActiveLetters,
-    resumeActiveLetters,
-  ]);
+      return currentGameState;
+    });
+  }, [resumeActiveLetters, settings]);
 
   const isSmallDevice = useMediaQuery("only screen and (max-width: 600px)");
 
@@ -92,8 +100,9 @@ export const App = () => {
         activeLetters: activeLetters.map(({ letter }) => letter).join(""),
       });
       if (word.length >= 4 && word !== lastWordAdded) {
-        lastCandidateWordRef.current = word;
-        if (checkWord(word, activeLetters, settings.strictMode)) {
+        const isWordValid = checkWord(word, activeLetters, settings.strictMode);
+        setListeningDisplay({ word, isWordValid });
+        if (isWordValid) {
           setFoundWords((currentFoundWords) => [word, ...currentFoundWords]);
           lastWordAddedRef.current = word;
           const wordScore = getScrabbleScore(word);
@@ -115,7 +124,14 @@ export const App = () => {
 
   const { sendAnalyticsClickEvent } = useAnalytics();
 
-  const onStart = () => {
+  const reset = useCallback(() => {
+    setFoundWords([]);
+    lastWordAddedRef.current = undefined;
+    setListeningDisplay(null);
+    setScore(0);
+  }, []);
+
+  const onStart = useCallback(() => {
     if (!gameActionsRef.current) {
       gameActionsRef.current = initGame(settings, onLetterRemoved);
     }
@@ -130,11 +146,17 @@ export const App = () => {
       letter_fall_speed: settings.letterFallSpeed,
       strict_mode: settings.strictMode,
     });
-  };
+  }, [
+    onLetterRemoved,
+    reset,
+    sendAnalyticsClickEvent,
+    settings,
+    startActiveLetters,
+    startSpeechRecognition,
+  ]);
 
-  const onStop = () => {
+  const onStop = useCallback(() => {
     gameActionsRef.current.setLetterFallSpeed(settings.letterFallSpeed / 2);
-    setGameState(GameState.Stopping);
     stopSpeechRecognition();
     stopActiveLetters();
     const numWords = new Set(foundWords).size;
@@ -146,16 +168,21 @@ export const App = () => {
       num_words: numWords,
       game_length: gameLength,
     });
-  };
-
-  useEffect(() => {
-    if (gameState === GameState.Stopping) {
-      if (activeLetters.length === 0) {
-        setGameState(GameState.Stopped);
-        gameActionsRef.current.stop();
-      }
+    if (activeLetters.length === 0) {
+      gameActionsRef.current?.stop();
+      setGameState(GameState.Stopped);
+    } else {
+      setGameState(GameState.Stopping);
     }
-  }, [gameState, activeLetters]);
+  }, [
+    activeLetters.length,
+    foundWords,
+    score,
+    sendAnalyticsClickEvent,
+    settings.letterFallSpeed,
+    stopActiveLetters,
+    stopSpeechRecognition,
+  ]);
 
   useEffect(() => {
     gameActionsRef.current?.setNewLetterRate(settings.newLetterRate);
@@ -165,14 +192,8 @@ export const App = () => {
     gameActionsRef.current?.setLetterFallSpeed(settings.letterFallSpeed);
   }, [settings.letterFallSpeed]);
 
-  const reset = () => {
-    setFoundWords([]);
-    lastWordAddedRef.current = undefined;
-    lastCandidateWordRef.current = undefined;
-    setScore(0);
-  };
-
   const openInstructionsPane = () => {
+    pauseGameIfRunning();
     setIsInstructionsPaneOpen(true);
     sendAnalyticsClickEvent("open_pane", { pane: "instructions" });
   };
@@ -180,9 +201,13 @@ export const App = () => {
   const closeInstructionsPane = () => {
     setIsInstructionsPaneOpen(false);
     sendAnalyticsClickEvent("close_pane", { pane: "instructions" });
+    if (!isSettingsPaneOpen) {
+      resumeGameIfPaused();
+    }
   };
 
   const openSettingsPane = () => {
+    pauseGameIfRunning();
     setIsSettingsPaneOpen(true);
     sendAnalyticsClickEvent("open_pane", { pane: "settings" });
   };
@@ -190,6 +215,9 @@ export const App = () => {
   const closeSettingsPane = () => {
     setIsSettingsPaneOpen(false);
     sendAnalyticsClickEvent("close_pane", { pane: "settings" });
+    if (!isInstructionsPaneOpen) {
+      resumeGameIfPaused();
+    }
   };
 
   const paneWidth = isSmallDevice ? "100%" : "480px";
@@ -201,10 +229,8 @@ export const App = () => {
           message={
             gameState === GameState.Running ? (
               <Listening
-                word={lastCandidateWordRef.current}
-                isWordValid={
-                  lastCandidateWordRef.current === lastWordAddedRef.current
-                }
+                word={listeningDisplay?.word}
+                isWordValid={listeningDisplay?.isWordValid}
               />
             ) : null
           }

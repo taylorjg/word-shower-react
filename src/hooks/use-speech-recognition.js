@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import log from "loglevel";
 
 const SpeechRecognition =
@@ -70,9 +70,9 @@ export const useSpeechRecognition = (onWord) => {
     }
   }, []);
 
-  if (runningRef.current && recognitionRef.current) {
+  useEffect(() => {
     onWordRef.current = onWord;
-  }
+  }, [onWord]);
 
   return {
     start,
