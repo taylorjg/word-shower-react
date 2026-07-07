@@ -1,39 +1,33 @@
+import { defineConfig } from "eslint/config";
+import eslintReact from "@eslint-react/eslint-plugin";
 import js from "@eslint/js";
-import globals from "globals";
-import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import vitest from "@vitest/eslint-plugin";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
+import globals from "globals";
 
 const jsxFiles = ["**/*.{js,jsx}"];
 const testFiles = ["**/*.test.{js,jsx}"];
 
-export default [
+export default defineConfig(
   {
     ignores: ["dist/**"],
   },
   js.configs.recommended,
   {
     files: jsxFiles,
-    ...react.configs.flat.recommended,
-    ...react.configs.flat["jsx-runtime"],
-    rules: {
-      ...react.configs.flat.recommended.rules,
-      ...react.configs.flat["jsx-runtime"].rules,
-    },
+    extends: [eslintReact.configs.recommended],
     languageOptions: {
-      ...react.configs.flat.recommended.languageOptions,
-      ...react.configs.flat["jsx-runtime"].languageOptions,
       ecmaVersion: "latest",
       sourceType: "module",
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
       globals: {
         ...globals.browser,
-      },
-    },
-    settings: {
-      react: {
-        version: "19.0",
       },
     },
   },
@@ -45,6 +39,7 @@ export default [
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      "@eslint-react/no-array-index-key": "off",
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },
@@ -54,7 +49,7 @@ export default [
   prettierRecommended,
   {
     files: testFiles,
-    ...vitest.configs.recommended,
+    extends: [vitest.configs.recommended],
     languageOptions: {
       globals: {
         ...vitest.environments.env.globals,
@@ -68,5 +63,5 @@ export default [
         ...globals.node,
       },
     },
-  },
-];
+  }
+);
