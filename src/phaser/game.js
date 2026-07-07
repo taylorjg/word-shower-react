@@ -146,6 +146,7 @@ const GAP = "0.25rem";
 
 const gameConfig = {
   type: Phaser.AUTO,
+  roundPixels: true,
   scale: {
     width: "100%",
     height: "100%",
