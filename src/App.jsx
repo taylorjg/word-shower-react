@@ -9,7 +9,7 @@ import { useAnalytics } from "@app/hooks/use-analytics";
 import { useConfetti, ConfettiType } from "@app/hooks/use-confetti";
 import { useSpeechRecognition } from "@app/hooks/use-speech-recognition";
 
-import { checkWord } from "@app/helpers/check-word";
+import { resolveWordFromCandidates } from "@app/helpers/check-word";
 import { getScrabbleScore, lookupLetterValue } from "@app/helpers/scrabble";
 
 import {
@@ -72,27 +72,41 @@ export const App = () => {
   } = useActiveLetters(settings, onAddLetter, onActiveLettersEmpty);
 
   const onWord = useCallback(
-    (word) => {
+    (candidates) => {
       const lastWordAdded = lastWordAddedRef.current;
+      const resolved = resolveWordFromCandidates(
+        candidates,
+        activeLetters,
+        settings.strictMode
+      );
+      if (!resolved) {
+        return;
+      }
+
+      const { word, isWordValid } = resolved;
       log.debug("[onWord]", {
+        candidates,
         word,
+        isWordValid,
         lastWordAdded,
         activeLetters: activeLetters.map(({ letter }) => letter).join(""),
       });
-      if (word.length >= 4 && word !== lastWordAdded) {
-        const isWordValid = checkWord(word, activeLetters, settings.strictMode);
-        setListeningDisplay({ word, isWordValid });
-        if (isWordValid) {
-          setFoundWords((currentFoundWords) => [word, ...currentFoundWords]);
-          lastWordAddedRef.current = word;
-          const wordScore = getScrabbleScore(word);
-          log.debug("[onWord]", { word, wordScore });
-          setScore((currentScore) => currentScore + wordScore);
-          if (settings.enableConfetti) {
-            const confettiType =
-              wordScore >= 10 ? ConfettiType.Stars : ConfettiType.Confetti;
-            setTimeout(playConfetti, 250, confettiType);
-          }
+
+      if (word === lastWordAdded) {
+        return;
+      }
+
+      setListeningDisplay({ word, isWordValid });
+      if (isWordValid) {
+        setFoundWords((currentFoundWords) => [word, ...currentFoundWords]);
+        lastWordAddedRef.current = word;
+        const wordScore = getScrabbleScore(word);
+        log.debug("[onWord]", { word, wordScore });
+        setScore((currentScore) => currentScore + wordScore);
+        if (settings.enableConfetti) {
+          const confettiType =
+            wordScore >= 10 ? ConfettiType.Stars : ConfettiType.Confetti;
+          setTimeout(playConfetti, 250, confettiType);
         }
       }
     },

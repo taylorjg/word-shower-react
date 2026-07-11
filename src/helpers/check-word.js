@@ -5,6 +5,28 @@ export const checkWord = (word, activeLetterWrappers, strictMode) => {
     : checkWordLenient(word, activeLetters);
 };
 
+export const resolveWordFromCandidates = (
+  candidates,
+  activeLetterWrappers,
+  strictMode,
+  minLength = 4
+) => {
+  const eligibleCandidates = candidates.filter(
+    (candidate) => candidate.length >= minLength
+  );
+  if (eligibleCandidates.length === 0) {
+    return null;
+  }
+
+  for (const candidate of eligibleCandidates) {
+    if (checkWord(candidate, activeLetterWrappers, strictMode)) {
+      return { word: candidate, isWordValid: true };
+    }
+  }
+
+  return { word: eligibleCandidates[0], isWordValid: false };
+};
+
 const makeLetterCountMap = (letters) => {
   const map = new Map();
   for (const letter of letters) {

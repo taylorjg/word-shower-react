@@ -35,6 +35,31 @@ export const getSpeechRecognitionErrorMessage = (error) =>
   SPEECH_RECOGNITION_ERROR_MESSAGES[error] ??
   "Speech recognition failed. Try again.";
 
+const MAX_SPEECH_ALTERNATIVES = 5;
+
+const normalizeSpokenWord = (transcript) => {
+  const [firstToken] = transcript.trim().toLowerCase().split(/\s+/);
+  if (!firstToken) {
+    return "";
+  }
+  return firstToken.replace(/[^a-z]/g, "");
+};
+
+const getWordCandidatesFromResult = (result) => {
+  const candidates = [];
+  const seen = new Set();
+
+  for (let i = 0; i < result.length; i++) {
+    const word = normalizeSpokenWord(result[i].transcript);
+    if (word && !seen.has(word)) {
+      seen.add(word);
+      candidates.push(word);
+    }
+  }
+
+  return candidates;
+};
+
 export const useSpeechRecognition = (onWord) => {
   const recognitionRef = useRef();
   const runningRef = useRef(false);
@@ -94,7 +119,7 @@ export const useSpeechRecognition = (onWord) => {
     recognition.continuous = true;
     recognition.lang = "en-GB";
     recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+    recognition.maxAlternatives = MAX_SPEECH_ALTERNATIVES;
 
     recognition.onstart = (event) => {
       log.debug("[onStart]", event);
@@ -113,15 +138,10 @@ export const useSpeechRecognition = (onWord) => {
 
     recognition.onresult = (event) => {
       log.debug("[onResult]", event);
-      const result = event.results[event.resultIndex][0];
-      const words = result.transcript
-        .trim()
-        .split(/\s/)
-        .map((s) => s.trim())
-        .map((s) => s.toLowerCase());
-      const word = words[0];
-      if (word && onWordRef.current) {
-        onWordRef.current(word);
+      const result = event.results[event.resultIndex];
+      const candidates = getWordCandidatesFromResult(result);
+      if (candidates.length > 0 && onWordRef.current) {
+        onWordRef.current(candidates);
       }
     };
 
