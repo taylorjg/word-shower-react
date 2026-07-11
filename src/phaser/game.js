@@ -4,6 +4,14 @@ import log from "loglevel";
 // Cap frame delta so returning from a background tab does not jump letters.
 const MAX_DELTA_MS = 100;
 
+const TILE_SIZE = 50;
+const TILE_RADIUS = 10;
+const TILE_COLOUR = 0xffe4c4; // Bisque
+const TILE_SHADOW_OFFSET = 3;
+const TILE_SHADOW_ALPHA = 0.6;
+const SINGLE_MARGIN = TILE_SIZE / 10;
+const BOTH_MARGINS = SINGLE_MARGIN * 2;
+
 class ShowerScene extends Phaser.Scene {
   constructor() {
     log.debug("[ShowerScene#constructor]");
@@ -108,13 +116,19 @@ class ShowerScene extends Phaser.Scene {
 
     const canvasWidth = this.sys.game.canvas.width;
 
-    const TILE_SIZE = 50;
-    const SINGLE_MARGIN = TILE_SIZE / 10;
-    const BOTH_MARGINS = SINGLE_MARGIN * 2;
+    const tileShadow = this.add.graphics();
+    tileShadow.fillStyle(0x000000, TILE_SHADOW_ALPHA);
+    tileShadow.fillRoundedRect(
+      TILE_SHADOW_OFFSET,
+      TILE_SHADOW_OFFSET,
+      TILE_SIZE,
+      TILE_SIZE,
+      TILE_RADIUS
+    );
 
     const letterTile = this.add.graphics();
-    letterTile.fillStyle(0xffe4c4); // Bisque
-    letterTile.fillRoundedRect(0, 0, TILE_SIZE, TILE_SIZE, 10);
+    letterTile.fillStyle(TILE_COLOUR);
+    letterTile.fillRoundedRect(0, 0, TILE_SIZE, TILE_SIZE, TILE_RADIUS);
 
     const letterTextStyle = {
       fontSize: "40px",
@@ -144,7 +158,7 @@ class ShowerScene extends Phaser.Scene {
     const availableWidth = canvasWidth - BOTH_MARGINS - TILE_SIZE;
     const x = SINGLE_MARGIN + Math.floor(availableWidth * Math.random());
     const y = -TILE_SIZE;
-    const children = [letterTile, letterText, valueText];
+    const children = [tileShadow, letterTile, letterText, valueText];
     const letterTileContainer = this.add.container(x, y, children);
     letterTileContainer.setData("id", id);
     this.letterTileContainers.push(letterTileContainer);

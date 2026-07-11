@@ -11,3 +11,6 @@ export const DEFAULT_SETTINGS = {
   strictMode: false,
   enableConfetti: true,
 };
+
+// Fall speed multiplier applied when the player hits stop.
+export const STOPPING_FALL_SPEED_MULTIPLIER = 4;

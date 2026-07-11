@@ -25,7 +25,11 @@ import {
 
 import { initGame } from "@app/phaser";
 
-import { GameState, DEFAULT_SETTINGS } from "@app/constants";
+import {
+  GameState,
+  DEFAULT_SETTINGS,
+  STOPPING_FALL_SPEED_MULTIPLIER,
+} from "@app/constants";
 
 import { StyledApp, StyledGrid } from "./App.styles";
 
@@ -156,7 +160,9 @@ export const App = () => {
   ]);
 
   const onStop = useCallback(() => {
-    gameActionsRef.current.setLetterFallSpeed(settings.letterFallSpeed / 2);
+    gameActionsRef.current.setLetterFallSpeed(
+      settings.letterFallSpeed / STOPPING_FALL_SPEED_MULTIPLIER
+    );
     stopSpeechRecognition();
     stopActiveLetters();
     const numWords = new Set(foundWords).size;
