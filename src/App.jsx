@@ -71,30 +71,6 @@ export const App = () => {
     resumeActiveLetters,
   } = useActiveLetters(settings, onAddLetter, onActiveLettersEmpty);
 
-  const pauseGameIfRunning = useCallback(() => {
-    setGameState((currentGameState) => {
-      if (currentGameState === GameState.Running) {
-        gameActionsRef.current?.pause();
-        pauseActiveLetters();
-        return GameState.Paused;
-      }
-      return currentGameState;
-    });
-  }, [pauseActiveLetters]);
-
-  const resumeGameIfPaused = useCallback(() => {
-    setGameState((currentGameState) => {
-      if (currentGameState === GameState.Paused) {
-        gameActionsRef.current?.resume(settings);
-        resumeActiveLetters();
-        return GameState.Running;
-      }
-      return currentGameState;
-    });
-  }, [resumeActiveLetters, settings]);
-
-  const isSmallDevice = useMediaQuery("only screen and (max-width: 600px)");
-
   const onWord = useCallback(
     (word) => {
       const lastWordAdded = lastWordAddedRef.current;
@@ -123,8 +99,39 @@ export const App = () => {
     [activeLetters, settings, playConfetti]
   );
 
-  const { start: startSpeechRecognition, stop: stopSpeechRecognition } =
-    useSpeechRecognition(onWord);
+  const {
+    start: startSpeechRecognition,
+    stop: stopSpeechRecognition,
+    isSupported: isSpeechRecognitionSupported,
+    errorMessage: speechRecognitionError,
+    status: speechRecognitionStatus,
+  } = useSpeechRecognition(onWord);
+
+  const pauseGameIfRunning = useCallback(() => {
+    setGameState((currentGameState) => {
+      if (currentGameState === GameState.Running) {
+        gameActionsRef.current?.pause();
+        pauseActiveLetters();
+        stopSpeechRecognition();
+        return GameState.Paused;
+      }
+      return currentGameState;
+    });
+  }, [pauseActiveLetters, stopSpeechRecognition]);
+
+  const resumeGameIfPaused = useCallback(() => {
+    setGameState((currentGameState) => {
+      if (currentGameState === GameState.Paused) {
+        gameActionsRef.current?.resume(settings);
+        resumeActiveLetters();
+        startSpeechRecognition();
+        return GameState.Running;
+      }
+      return currentGameState;
+    });
+  }, [resumeActiveLetters, settings, startSpeechRecognition]);
+
+  const isSmallDevice = useMediaQuery("only screen and (max-width: 600px)");
 
   const { sendAnalyticsClickEvent } = useAnalytics();
 
@@ -235,6 +242,8 @@ export const App = () => {
           message={
             gameState === GameState.Running ? (
               <Listening
+                status={speechRecognitionStatus}
+                errorMessage={speechRecognitionError}
                 word={listeningDisplay?.word}
                 isWordValid={listeningDisplay?.isWordValid}
               />
@@ -246,7 +255,13 @@ export const App = () => {
         <Shower />
         <FoundWords foundWords={foundWords} />
         <Score score={score} foundWords={foundWords} />
-        <Buttons gameState={gameState} onStart={onStart} onStop={onStop} />
+        <Buttons
+          gameState={gameState}
+          onStart={onStart}
+          onStop={onStop}
+          startDisabled={!isSpeechRecognitionSupported}
+          speechRecognitionError={speechRecognitionError}
+        />
       </StyledGrid>
 
       <ReactSlidingPane

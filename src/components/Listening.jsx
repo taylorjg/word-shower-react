@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
 
+import { SpeechRecognitionStatus } from "@app/hooks/use-speech-recognition";
 import { getScrabbleScore } from "@app/helpers/scrabble";
 
 import {
@@ -10,16 +11,32 @@ import {
   StyledUpper,
   StyledLower,
   StyledDot,
+  StyledStatusError,
 } from "./Listening.styles";
 
-export const Listening = ({ word, isWordValid }) => {
+const STATUS_LABELS = {
+  [SpeechRecognitionStatus.Starting]: "Starting...",
+  [SpeechRecognitionStatus.Listening]: "Listening...",
+  [SpeechRecognitionStatus.Reconnecting]: "Reconnecting...",
+  [SpeechRecognitionStatus.Idle]: "Waiting for mic...",
+};
+
+export const Listening = ({ status, errorMessage, word, isWordValid }) => {
   const wordScore = word && isWordValid ? `(+${getScrabbleScore(word)})` : "";
+  const statusLabel =
+    STATUS_LABELS[status] ?? STATUS_LABELS[SpeechRecognitionStatus.Idle];
 
   return (
     <StyledListening>
       <StyledUpper>
-        <span>Listening...</span>
-        <StyledDot />
+        {errorMessage ? (
+          <StyledStatusError>{errorMessage}</StyledStatusError>
+        ) : (
+          <>
+            <span>{statusLabel}</span>
+            <StyledDot $status={status} />
+          </>
+        )}
       </StyledUpper>
       <StyledLower>
         {word ? (
@@ -41,6 +58,8 @@ export const Listening = ({ word, isWordValid }) => {
 };
 
 Listening.propTypes = {
+  status: PropTypes.oneOf(Object.values(SpeechRecognitionStatus)).isRequired,
+  errorMessage: PropTypes.string,
   word: PropTypes.string,
   isWordValid: PropTypes.bool,
 };
