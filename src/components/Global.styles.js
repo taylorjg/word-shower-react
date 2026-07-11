@@ -24,5 +24,8 @@ export const theme = {
   border: "0.15rem solid transparent",
   colour: "bisque",
   backgroundColour: "chocolate",
+  accentColour: "goldenrod",
+  sliderTrackColour: "rgba(255, 228, 196, 0.35)",
+  checkboxCheckmarkColour: "bisque",
   padding: "0.5rem",
 };
