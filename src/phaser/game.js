@@ -1,6 +1,9 @@
 import * as Phaser from "phaser";
 import log from "loglevel";
 
+// Cap frame delta so returning from a background tab does not jump letters.
+const MAX_DELTA_MS = 100;
+
 class ShowerScene extends Phaser.Scene {
   constructor() {
     log.debug("[ShowerScene#constructor]");
@@ -39,28 +42,27 @@ class ShowerScene extends Phaser.Scene {
   }
 
   update(_, delta) {
-    if (this.letterTileContainers.length > 0) {
-      const canvasHeight = this.sys.game.canvas.height;
-      const top = this.cameras.main.scrollY;
-      const bottom = top + canvasHeight;
-
-      const scrolledOutOfView = (item) => {
-        return item.y > bottom;
-      };
-
-      const firstItem = this.letterTileContainers[0];
-      if (scrolledOutOfView(firstItem)) {
-        this.letterTileContainers.shift();
-        const id = firstItem.getData("id");
-        firstItem.destroy(true);
-        this.game.events.emit("LETTER_REMOVED", id);
-      }
+    if (this.letterTileContainers.length === 0) {
+      return;
     }
 
-    const distanceToFall = this.sys.game.canvas.height;
-    const letterFallSpeedFrameCount = this.letterFallSpeed / delta;
-    const fallDelta = distanceToFall / letterFallSpeedFrameCount;
-    this.cameras.main.scrollY -= fallDelta;
+    const canvasHeight = this.sys.game.canvas.height;
+    const elapsed = Math.min(delta, MAX_DELTA_MS);
+    const fallDelta = (canvasHeight / this.letterFallSpeed) * elapsed;
+
+    for (const container of this.letterTileContainers) {
+      container.y += fallDelta;
+    }
+
+    while (
+      this.letterTileContainers.length > 0 &&
+      this.letterTileContainers[0].y > canvasHeight
+    ) {
+      const firstItem = this.letterTileContainers.shift();
+      const id = firstItem.getData("id");
+      firstItem.destroy(true);
+      this.game.events.emit("LETTER_REMOVED", id);
+    }
   }
 
   onPause() {
@@ -81,7 +83,7 @@ class ShowerScene extends Phaser.Scene {
     log.debug("[ShowerScene#onWake]", { settings });
     this.newLetterRate = settings.newLetterRate;
     this.letterFallSpeed = settings.letterFallSpeed;
-    this.cameras.main.scrollY = 0;
+    this.clearLetterTiles();
   }
 
   onSetNewLetterRate(newLetterRate) {
@@ -92,6 +94,13 @@ class ShowerScene extends Phaser.Scene {
   onSetLetterFallSpeed(letterFallSpeed) {
     log.debug("[ShowerScene#onSetLetterFallSpeed]", { letterFallSpeed });
     this.letterFallSpeed = letterFallSpeed;
+  }
+
+  clearLetterTiles() {
+    for (const container of this.letterTileContainers) {
+      container.destroy(true);
+    }
+    this.letterTileContainers = [];
   }
 
   onAddLetter(id, letter, value) {
@@ -134,7 +143,7 @@ class ShowerScene extends Phaser.Scene {
 
     const availableWidth = canvasWidth - BOTH_MARGINS - TILE_SIZE;
     const x = SINGLE_MARGIN + Math.floor(availableWidth * Math.random());
-    const y = this.cameras.main.scrollY - TILE_SIZE;
+    const y = -TILE_SIZE;
     const children = [letterTile, letterText, valueText];
     const letterTileContainer = this.add.container(x, y, children);
     letterTileContainer.setData("id", id);
@@ -146,7 +155,7 @@ const GAP = "0.25rem";
 
 const gameConfig = {
   type: Phaser.AUTO,
-  roundPixels: true,
+  roundPixels: false,
   scale: {
     width: "100%",
     height: "100%",
