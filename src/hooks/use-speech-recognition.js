@@ -118,7 +118,7 @@ export const useSpeechRecognition = (onWord) => {
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.lang = "en-GB";
-    recognition.interimResults = false;
+    recognition.interimResults = true;
     recognition.maxAlternatives = MAX_SPEECH_ALTERNATIVES;
 
     recognition.onstart = (event) => {
@@ -138,10 +138,25 @@ export const useSpeechRecognition = (onWord) => {
 
     recognition.onresult = (event) => {
       log.debug("[onResult]", event);
-      const result = event.results[event.resultIndex];
-      const candidates = getWordCandidatesFromResult(result);
-      if (candidates.length > 0 && onWordRef.current) {
-        onWordRef.current(candidates);
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i];
+        if (!result.isFinal) {
+          continue;
+        }
+
+        const candidates = getWordCandidatesFromResult(result);
+        if (candidates.length > 0 && onWordRef.current) {
+          onWordRef.current(candidates, { isFinal: true });
+        }
+      }
+
+      const lastResult = event.results[event.results.length - 1];
+      if (!lastResult.isFinal) {
+        const word = normalizeSpokenWord(lastResult[0].transcript);
+        if (word && onWordRef.current) {
+          onWordRef.current([word], { isFinal: false });
+        }
       }
     };
 

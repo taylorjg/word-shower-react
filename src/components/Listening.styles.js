@@ -22,6 +22,10 @@ export const StyledLower = styled.div`
   font-style: italic;
 `;
 
+export const StyledInterimWord = styled.span`
+  color: #888;
+`;
+
 export const StyledStatusError = styled.span`
   color: #b00020;
   font-size: ${(props) => props.theme.fontSize1};

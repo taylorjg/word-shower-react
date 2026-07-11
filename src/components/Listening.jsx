@@ -12,6 +12,7 @@ import {
   StyledLower,
   StyledDot,
   StyledStatusError,
+  StyledInterimWord,
 } from "./Listening.styles";
 
 const STATUS_LABELS = {
@@ -21,8 +22,15 @@ const STATUS_LABELS = {
   [SpeechRecognitionStatus.Idle]: "Waiting for mic...",
 };
 
-export const Listening = ({ status, errorMessage, word, isWordValid }) => {
-  const wordScore = word && isWordValid ? `(+${getScrabbleScore(word)})` : "";
+export const Listening = ({
+  status,
+  errorMessage,
+  word,
+  isWordValid,
+  isInterim,
+}) => {
+  const wordScore =
+    word && isWordValid && !isInterim ? `(+${getScrabbleScore(word)})` : "";
   const statusLabel =
     STATUS_LABELS[status] ?? STATUS_LABELS[SpeechRecognitionStatus.Idle];
 
@@ -40,15 +48,22 @@ export const Listening = ({ status, errorMessage, word, isWordValid }) => {
       </StyledUpper>
       <StyledLower>
         {word ? (
-          <>
-            <FontAwesomeIcon icon={faComment} />
-            &nbsp;&quot;{word}&quot;&nbsp;
-            {wordScore && <>{wordScore}&nbsp;</>}
-            <FontAwesomeIcon
-              icon={isWordValid ? faCheck : faXmark}
-              color={isWordValid ? "green" : "red"}
-            />
-          </>
+          isInterim ? (
+            <StyledInterimWord>
+              <FontAwesomeIcon icon={faComment} />
+              &nbsp;&quot;{word}&quot;…
+            </StyledInterimWord>
+          ) : (
+            <>
+              <FontAwesomeIcon icon={faComment} />
+              &nbsp;&quot;{word}&quot;&nbsp;
+              {wordScore && <>{wordScore}&nbsp;</>}
+              <FontAwesomeIcon
+                icon={isWordValid ? faCheck : faXmark}
+                color={isWordValid ? "green" : "red"}
+              />
+            </>
+          )
         ) : (
           <>&nbsp;</>
         )}
@@ -62,4 +77,5 @@ Listening.propTypes = {
   errorMessage: PropTypes.string,
   word: PropTypes.string,
   isWordValid: PropTypes.bool,
+  isInterim: PropTypes.bool,
 };

@@ -72,7 +72,15 @@ export const App = () => {
   } = useActiveLetters(settings, onAddLetter, onActiveLettersEmpty);
 
   const onWord = useCallback(
-    (candidates) => {
+    (candidates, { isFinal = true } = {}) => {
+      if (!isFinal) {
+        const word = candidates[0];
+        if (word) {
+          setListeningDisplay({ word, isWordValid: null, isInterim: true });
+        }
+        return;
+      }
+
       const lastWordAdded = lastWordAddedRef.current;
       const resolved = resolveWordFromCandidates(
         candidates,
@@ -96,7 +104,7 @@ export const App = () => {
         return;
       }
 
-      setListeningDisplay({ word, isWordValid });
+      setListeningDisplay({ word, isWordValid, isInterim: false });
       if (isWordValid) {
         setFoundWords((currentFoundWords) => [word, ...currentFoundWords]);
         lastWordAddedRef.current = word;
@@ -157,13 +165,13 @@ export const App = () => {
   }, []);
 
   const onStart = useCallback(() => {
+    startSpeechRecognition();
     if (!gameActionsRef.current) {
       gameActionsRef.current = initGame(settings, onLetterRemoved);
     }
     reset();
     gameActionsRef.current.start(settings);
     setGameState(GameState.Running);
-    startSpeechRecognition();
     startActiveLetters();
     startTimeRef.current = performance.now();
     sendAnalyticsClickEvent("start_game", {
@@ -260,6 +268,7 @@ export const App = () => {
                 errorMessage={speechRecognitionError}
                 word={listeningDisplay?.word}
                 isWordValid={listeningDisplay?.isWordValid}
+                isInterim={listeningDisplay?.isInterim}
               />
             ) : null
           }
