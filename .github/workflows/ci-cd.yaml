@@ -1,5 +1,7 @@
-name: CI/CD
-on: push
+name: ci-cd
+on:
+  push:
+  pull_request:
 
 jobs:
   run-unit-tests:
