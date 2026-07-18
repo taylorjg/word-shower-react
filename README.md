@@ -1,3 +1,5 @@
+[![ci-cd](https://github.com/taylorjg/word-shower-react/actions/workflows/ci-cd.yaml/badge.svg)](https://github.com/taylorjg/word-shower-react/actions/workflows/ci-cd.yaml)
+
 # Description
 
 We had the wonderful [Lucia Velasco](https://github.com/luciavelasco) working with us as a contractor for a year at Disney Streaming.
