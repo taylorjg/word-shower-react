@@ -23,7 +23,7 @@
     "loglevel": "^1.8.1",
     "phaser": "^4.2.0",
     "prop-types": "^15.8.1",
-    "react": "^19.0.0",
+    "react": "^19.2.8",
     "react-dom": "^19.0.0",
     "react-sliding-pane": "^7.3.0",
     "styled-components": "^6.4.4",
