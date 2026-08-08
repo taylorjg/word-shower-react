@@ -1,4 +1,4 @@
-[![ci-cd](https://github.com/taylorjg/word-shower-react/actions/workflows/ci-cd.yaml/badge.svg)](https://github.com/taylorjg/word-shower-react/actions/workflows/ci-cd.yaml)
+[![ci-cd](https://github.com/taylorjg/word-shower-react/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/taylorjg/word-shower-react/actions/workflows/ci-cd.yml)
 
 # Description
 
