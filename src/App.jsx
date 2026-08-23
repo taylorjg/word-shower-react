@@ -11,6 +11,10 @@ import { useSpeechRecognition } from "@app/hooks/use-speech-recognition";
 
 import { resolveWordFromCandidates } from "@app/helpers/check-word";
 import { getScrabbleScore, lookupLetterValue } from "@app/helpers/scrabble";
+import {
+  resolveWordRecognition,
+  WordRecognitionOutcome,
+} from "@app/helpers/word-recognition";
 
 import {
   Buttons,
@@ -40,7 +44,8 @@ export const App = () => {
   const [isInstructionsPaneOpen, setIsInstructionsPaneOpen] = useState(false);
   const [isSettingsPaneOpen, setIsSettingsPaneOpen] = useState(false);
   const [listeningDisplay, setListeningDisplay] = useState(null);
-  const lastWordAddedRef = useRef();
+  const foundWordsRef = useRef(new Set());
+  const lastRecognisedWordRef = useRef();
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const startTimeRef = useRef();
   const gameActionsRef = useRef();
@@ -81,7 +86,6 @@ export const App = () => {
         return;
       }
 
-      const lastWordAdded = lastWordAddedRef.current;
       const resolved = resolveWordFromCandidates(
         candidates,
         activeLetters,
@@ -92,22 +96,47 @@ export const App = () => {
       }
 
       const { word, isWordValid } = resolved;
+      const recognition = resolveWordRecognition({
+        word,
+        isWordValid,
+        foundWords: foundWordsRef.current,
+        lastRecognisedWord: lastRecognisedWordRef.current,
+      });
+
       log.debug("[onWord]", {
         candidates,
         word,
         isWordValid,
-        lastWordAdded,
+        outcome: recognition.outcome,
         activeLetters: activeLetters.map(({ letter }) => letter).join(""),
       });
 
-      if (word === lastWordAdded) {
+      if (recognition.outcome === WordRecognitionOutcome.IgnoredConsecutive) {
         return;
       }
 
-      setListeningDisplay({ word, isWordValid, isInterim: false });
-      if (isWordValid) {
+      lastRecognisedWordRef.current = word;
+
+      if (recognition.outcome === WordRecognitionOutcome.RejectedDuplicate) {
+        setListeningDisplay({
+          word,
+          isWordValid: true,
+          isDuplicate: true,
+          isInterim: false,
+        });
+        return;
+      }
+
+      setListeningDisplay({
+        word,
+        isWordValid,
+        isDuplicate: false,
+        isInterim: false,
+      });
+
+      if (recognition.outcome === WordRecognitionOutcome.Accepted) {
+        foundWordsRef.current.add(word);
         setFoundWords((currentFoundWords) => [word, ...currentFoundWords]);
-        lastWordAddedRef.current = word;
         const wordScore = getScrabbleScore(word);
         log.debug("[onWord]", { word, wordScore });
         setScore((currentScore) => currentScore + wordScore);
@@ -159,7 +188,8 @@ export const App = () => {
 
   const reset = useCallback(() => {
     setFoundWords([]);
-    lastWordAddedRef.current = undefined;
+    foundWordsRef.current = new Set();
+    lastRecognisedWordRef.current = undefined;
     setListeningDisplay(null);
     setScore(0);
   }, []);
@@ -268,6 +298,7 @@ export const App = () => {
                 errorMessage={speechRecognitionError}
                 word={listeningDisplay?.word}
                 isWordValid={listeningDisplay?.isWordValid}
+                isDuplicate={listeningDisplay?.isDuplicate}
                 isInterim={listeningDisplay?.isInterim}
               />
             ) : null

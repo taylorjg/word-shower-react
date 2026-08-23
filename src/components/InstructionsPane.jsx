@@ -30,7 +30,7 @@ export const InstructionsPane = ({ onClose }) => {
         </StyledListItem>
         <StyledListItem>
           Each found word will increase your score by the Scrabble value of the
-          word
+          word. Each word can only be found once per game
         </StyledListItem>
         <StyledListItem>
           Click the Stop button when you have had enough

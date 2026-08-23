@@ -26,6 +26,10 @@ export const StyledInterimWord = styled.span`
   color: #888;
 `;
 
+export const StyledDuplicateLabel = styled.span`
+  color: #e6a700;
+`;
+
 export const StyledStatusError = styled.span`
   color: #b00020;
   font-size: ${(props) => props.theme.fontSize1};
