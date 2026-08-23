@@ -14,13 +14,24 @@ export const StyledApp = styled.div`
 `;
 
 export const StyledGrid = styled.div`
+  position: relative;
   height: 100%;
   display: grid;
   gap: 0.25rem;
+  overflow: hidden;
   grid-template-areas:
     "a a"
     "b c"
     "d e";
   grid-template-rows: auto 1fr auto;
   grid-template-columns: 2fr 1fr;
+`;
+
+export const StyledConfettiCanvas = styled.canvas`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
 `;

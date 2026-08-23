@@ -35,7 +35,7 @@ import {
   STOPPING_FALL_SPEED_MULTIPLIER,
 } from "@app/constants";
 
-import { StyledApp, StyledGrid } from "./App.styles";
+import { StyledApp, StyledConfettiCanvas, StyledGrid } from "./App.styles";
 
 export const App = () => {
   const [gameState, setGameState] = useState(GameState.Stopped);
@@ -49,7 +49,8 @@ export const App = () => {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const startTimeRef = useRef();
   const gameActionsRef = useRef();
-  const { playConfetti } = useConfetti();
+  const confettiCanvasRef = useRef(null);
+  const { playConfetti } = useConfetti(confettiCanvasRef);
 
   const onAddLetter = useCallback((letterWrapper) => {
     const { id, letter } = letterWrapper;
@@ -290,6 +291,7 @@ export const App = () => {
   return (
     <StyledApp>
       <StyledGrid>
+        <StyledConfettiCanvas ref={confettiCanvasRef} aria-hidden="true" />
         <Header
           message={
             gameState === GameState.Running ? (
