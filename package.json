@@ -44,7 +44,7 @@
     "gh-pages": "^6.0.0",
     "globals": "^17.13.0",
     "prettier": "^3.9.9",
-    "vite": "^8.3.1",
+    "vite": "^8.3.2",
     "vitest": "^5.0.3"
   },
   "allowScripts": {
